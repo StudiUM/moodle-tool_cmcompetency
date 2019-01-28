@@ -25,4 +25,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['errorinvalidcoursemodule'] = 'Invalid course module.';
 $string['pluginname'] = 'Course module competency rating';
