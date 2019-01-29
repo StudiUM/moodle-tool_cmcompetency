@@ -28,6 +28,8 @@ defined('MOODLE_INTERNAL') || die();
 use context_module;
 use context_user;
 use lang_string;
+use core_competency\persistent;
+use core_competency\competency;
 
 /**
  * Class for loading/storing user_competency_coursemodule from the DB.

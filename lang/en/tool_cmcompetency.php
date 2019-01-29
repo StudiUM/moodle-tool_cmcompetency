@@ -26,4 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['errorinvalidcoursemodule'] = 'Invalid course module.';
+$string['eventusercompetencyratedincoursemodule'] = 'User competency rated in course module.';
+$string['eventusercompetencyviewedincoursemodule'] = 'User competency viewed in a course module.';
+$string['evidence_manualoverrideincoursemodule'] = 'The competency rating was manually set in the course module \'{$a}\'.';
 $string['pluginname'] = 'Course module competency rating';

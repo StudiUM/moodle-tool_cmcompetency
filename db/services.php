@@ -28,7 +28,36 @@
 defined('MOODLE_INTERNAL') || die();
 
 $functions = array(
-
+    'tool_cmcompetency_data_for_user_competency_summary_in_coursemodule' => array(
+        'classname'    => 'tool_cmcompetency\external',
+        'methodname'   => 'data_for_user_competency_summary_in_coursemodule',
+        'classpath'    => '',
+        'description'  => 'Load a summary of a user competency in course module.',
+        'type'         => 'read',
+        'capabilities' => 'moodle/competency:coursecompetencyview',
+        'ajax'         => true,
+        'services'     => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
+    'tool_cmcompetency_grade_competency_in_coursemodule' => array(
+        'classname'    => 'tool_cmcompetency\external',
+        'methodname'   => 'grade_competency_in_coursemodule',
+        'classpath'    => '',
+        'description'  => 'Grade a competency from the course module page.',
+        'type'         => 'write',
+        'capabilities' => 'moodle/competency:competencygrade',
+        'ajax'         => true,
+        'services'     => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
+    'tool_cmcompetency_user_competency_viewed_in_coursemodule' => array(
+        'classname'    => 'tool_cmcompetency\external',
+        'methodname'   => 'user_competency_viewed_in_coursemodule',
+        'classpath'    => '',
+        'description'  => 'Log the user competency viewed in course module event',
+        'type'         => 'write',
+        'capabilities' => 'moodle/competency:usercompetencyview',
+        'ajax'         => true,
+        'services'     => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
     // Course module competency related functions.
 );
 
