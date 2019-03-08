@@ -147,7 +147,7 @@ class tool_cmcompetency_external_testcase extends externallib_advanced_testcase 
         $course = $dg->create_course(['fullname' => 'Evil course']);
 
         $pagegenerator = $this->getDataGenerator()->get_plugin_generator('mod_page');
-        $page = $pagegenerator->create_instance(array('course' => $course->id));
+        $page = $pagegenerator->create_instance(array('course' => $course->id, 'name' => 'Page 1'));
         $cm = get_coursemodule_from_instance('page', $page->id);
 
         $dg->enrol_user($this->creator->id, $course->id, 'editingteacher');
@@ -166,5 +166,8 @@ class tool_cmcompetency_external_testcase extends externallib_advanced_testcase 
         $this->assertEquals('A', $summary->usercompetencysummary->usercompetencycm->gradename);
         $this->assertEquals('No', $summary->usercompetencysummary->usercompetencycm->proficiencyname);
         $this->assertEquals('A', $summary->usercompetencysummary->evidence[0]->gradename);
+
+        $this->assertEquals($cm->id, $summary->coursemodule->id);
+        $this->assertEquals('Page 1', $summary->coursemodule->name);
     }
 }

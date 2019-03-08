@@ -26,6 +26,7 @@ namespace tool_cmcompetency\external;
 defined('MOODLE_INTERNAL') || die();
 
 use core_competency\user_competency;
+use core_course\external\course_module_summary_exporter;
 use tool_cmcompetency\external\uc_cm_summary_exporter;
 use renderer_base;
 use stdClass;
@@ -54,6 +55,9 @@ class user_competency_summary_in_coursemodule_exporter extends \core\external\ex
         return array(
             'usercompetencysummary' => array(
                 'type' => uc_cm_summary_exporter::read_properties_definition()
+            ),
+            'coursemodule' => array(
+                'type' => course_module_summary_exporter::read_properties_definition()
             )
         );
     }
@@ -66,6 +70,12 @@ class user_competency_summary_in_coursemodule_exporter extends \core\external\ex
         $result->usercompetencysummary = $exporter->export($output);
         $result->usercompetencysummary->cangrade = user_competency::can_grade_user_in_course($this->related['user']->id,
             $this->related['course']->id);
+
+        $cmid = $this->related['usercompetencycoursemodule']->get('cmid');
+        $modinfo = get_fast_modinfo($this->related['course']);
+        $cm = $modinfo->get_cm($cmid);
+        $cmexporter = new course_module_summary_exporter(null, array('cm' => $cm));
+        $result->coursemodule = $cmexporter->export($output);
 
         return (array) $result;
     }
