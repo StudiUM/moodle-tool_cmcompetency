@@ -40,55 +40,81 @@ use tool_cmcompetency\api;
  */
 class tool_cmcompetency_api_testcase extends externallib_advanced_testcase {
 
-    /**
-     * Test course module statistics api functions.
-     */
-    public function test_coursemodule_statistics() {
+    /** @var stdClass $student1 User for generating plans, student of course1. */
+    protected $student1 = null;
+
+    /** @var stdClass $student2 User for generating plans, student of course1. */
+    protected $student2 = null;
+
+    /** @var stdClass $student3 User for generating plans, student of course1. */
+    protected $student3 = null;
+
+    /** @var stdClass $student4 User for generating plans, student of course1. */
+    protected $student4 = null;
+
+    /** @var stdClass $course1 Course that contains the activities to grade. */
+    protected $course1 = null;
+
+    /** @var stdClass $page Page for $course1. */
+    protected $page = null;
+
+    /** @var stdClass $framework Competency framework. */
+    protected $framework = null;
+
+    protected function setUp() {
         $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
         $lpg = $dg->get_plugin_generator('core_competency');
         $this->setAdminUser();
 
-        $u1 = $dg->create_user();
-        $u2 = $dg->create_user();
-        $u3 = $dg->create_user();
-        $u4 = $dg->create_user();
-        $c1 = $dg->create_course();
+        $this->student1 = $dg->create_user();
+        $this->student2 = $dg->create_user();
+        $this->student3 = $dg->create_user();
+        $this->student4 = $dg->create_user();
+        $this->course1 = $dg->create_course();
 
         $pagegenerator = $this->getDataGenerator()->get_plugin_generator('mod_page');
-        $page = $pagegenerator->create_instance(array('course' => $c1->id));
+        $this->page = $pagegenerator->create_instance(array('course' => $this->course1->id));
 
-        $cm = get_coursemodule_from_instance('page', $page->id);
-
-        $framework = $lpg->create_framework();
+        $this->framework = $lpg->create_framework();
         // Enrol students in the course.
         $studentarch = get_archetype_roles('student');
         $studentrole = array_shift($studentarch);
-        $coursecontext = context_course::instance($c1->id);
-        $dg->role_assign($studentrole->id, $u1->id, $coursecontext->id);
-        $dg->enrol_user($u1->id, $c1->id, $studentrole->id);
-        $dg->role_assign($studentrole->id, $u2->id, $coursecontext->id);
-        $dg->enrol_user($u2->id, $c1->id, $studentrole->id);
-        $dg->role_assign($studentrole->id, $u3->id, $coursecontext->id);
-        $dg->enrol_user($u3->id, $c1->id, $studentrole->id);
-        $dg->role_assign($studentrole->id, $u4->id, $coursecontext->id);
-        $dg->enrol_user($u4->id, $c1->id, $studentrole->id);
+        $coursecontext = context_course::instance($this->course1->id);
+        $dg->role_assign($studentrole->id, $this->student1->id, $coursecontext->id);
+        $dg->enrol_user($this->student1->id, $this->course1->id, $studentrole->id);
+        $dg->role_assign($studentrole->id, $this->student2->id, $coursecontext->id);
+        $dg->enrol_user($this->student2->id, $this->course1->id, $studentrole->id);
+        $dg->role_assign($studentrole->id, $this->student3->id, $coursecontext->id);
+        $dg->enrol_user($this->student3->id, $this->course1->id, $studentrole->id);
+        $dg->role_assign($studentrole->id, $this->student4->id, $coursecontext->id);
+        $dg->enrol_user($this->student4->id, $this->course1->id, $studentrole->id);
+    }
+
+    /**
+     * Test course module statistics api functions.
+     */
+    public function test_coursemodule_statistics() {
+        $dg = $this->getDataGenerator();
+        $lpg = $dg->get_plugin_generator('core_competency');
+
+        $cm = get_coursemodule_from_instance('page', $this->page->id);
 
         // Create 6 competencies.
-        $comp1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
-        $comp2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
-        $comp3 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
-        $comp4 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
-        $comp5 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
-        $comp6 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
+        $comp1 = $lpg->create_competency(array('competencyframeworkid' => $this->framework->get('id')));
+        $comp2 = $lpg->create_competency(array('competencyframeworkid' => $this->framework->get('id')));
+        $comp3 = $lpg->create_competency(array('competencyframeworkid' => $this->framework->get('id')));
+        $comp4 = $lpg->create_competency(array('competencyframeworkid' => $this->framework->get('id')));
+        $comp5 = $lpg->create_competency(array('competencyframeworkid' => $this->framework->get('id')));
+        $comp6 = $lpg->create_competency(array('competencyframeworkid' => $this->framework->get('id')));
 
         // Link 6 out of 6 to a course.
-        $lpg->create_course_competency(array('competencyid' => $comp1->get('id'), 'courseid' => $c1->id));
-        $lpg->create_course_competency(array('competencyid' => $comp2->get('id'), 'courseid' => $c1->id));
-        $lpg->create_course_competency(array('competencyid' => $comp3->get('id'), 'courseid' => $c1->id));
-        $lpg->create_course_competency(array('competencyid' => $comp4->get('id'), 'courseid' => $c1->id));
-        $lpg->create_course_competency(array('competencyid' => $comp5->get('id'), 'courseid' => $c1->id));
-        $lpg->create_course_competency(array('competencyid' => $comp6->get('id'), 'courseid' => $c1->id));
+        $lpg->create_course_competency(array('competencyid' => $comp1->get('id'), 'courseid' => $this->course1->id));
+        $lpg->create_course_competency(array('competencyid' => $comp2->get('id'), 'courseid' => $this->course1->id));
+        $lpg->create_course_competency(array('competencyid' => $comp3->get('id'), 'courseid' => $this->course1->id));
+        $lpg->create_course_competency(array('competencyid' => $comp4->get('id'), 'courseid' => $this->course1->id));
+        $lpg->create_course_competency(array('competencyid' => $comp5->get('id'), 'courseid' => $this->course1->id));
+        $lpg->create_course_competency(array('competencyid' => $comp6->get('id'), 'courseid' => $this->course1->id));
 
         // Link competencies to course module.
         $lpg->create_course_module_competency(array('competencyid' => $comp1->get('id'), 'cmid' => $cm->id));
@@ -100,31 +126,31 @@ class tool_cmcompetency_api_testcase extends externallib_advanced_testcase {
 
         // Rate some competencies.
         // User 1.
-        api::grade_competency_in_coursemodule($cm, $u1->id, $comp1->get('id'), 1, 'Unit test 1');
-        api::grade_competency_in_coursemodule($cm, $u1->id, $comp2->get('id'), 2, 'Unit test 2');
-        api::grade_competency_in_coursemodule($cm, $u1->id, $comp3->get('id'), 3, 'Unit test 3');
-        api::grade_competency_in_coursemodule($cm, $u1->id, $comp4->get('id'), 4, 'Unit test 4');
+        api::grade_competency_in_coursemodule($cm, $this->student1->id, $comp1->get('id'), 1, 'Unit test 1');
+        api::grade_competency_in_coursemodule($cm, $this->student1->id, $comp2->get('id'), 2, 'Unit test 2');
+        api::grade_competency_in_coursemodule($cm, $this->student1->id, $comp3->get('id'), 3, 'Unit test 3');
+        api::grade_competency_in_coursemodule($cm, $this->student1->id, $comp4->get('id'), 4, 'Unit test 4');
         // User 2.
-        api::grade_competency_in_coursemodule($cm, $u2->id, $comp1->get('id'), 1, 'Unit test 1');
-        api::grade_competency_in_coursemodule($cm, $u2->id, $comp2->get('id'), 2, 'Unit test 2');
-        api::grade_competency_in_coursemodule($cm, $u2->id, $comp3->get('id'), 1, 'Unit test 3');
-        api::grade_competency_in_coursemodule($cm, $u2->id, $comp4->get('id'), 4, 'Unit test 4');
+        api::grade_competency_in_coursemodule($cm, $this->student2->id, $comp1->get('id'), 1, 'Unit test 1');
+        api::grade_competency_in_coursemodule($cm, $this->student2->id, $comp2->get('id'), 2, 'Unit test 2');
+        api::grade_competency_in_coursemodule($cm, $this->student2->id, $comp3->get('id'), 1, 'Unit test 3');
+        api::grade_competency_in_coursemodule($cm, $this->student2->id, $comp4->get('id'), 4, 'Unit test 4');
         // User 3.
-        api::grade_competency_in_coursemodule($cm, $u3->id, $comp1->get('id'), 3, 'Unit test 3');
-        api::grade_competency_in_coursemodule($cm, $u3->id, $comp2->get('id'), 2, 'Unit test 2');
+        api::grade_competency_in_coursemodule($cm, $this->student3->id, $comp1->get('id'), 3, 'Unit test 3');
+        api::grade_competency_in_coursemodule($cm, $this->student3->id, $comp2->get('id'), 2, 'Unit test 2');
         // User 4.
-        api::grade_competency_in_coursemodule($cm, $u4->id, $comp1->get('id'), 2, 'Unit test 2');
-        api::grade_competency_in_coursemodule($cm, $u4->id, $comp2->get('id'), 1, 'Unit test 1');
+        api::grade_competency_in_coursemodule($cm, $this->student4->id, $comp1->get('id'), 2, 'Unit test 2');
+        api::grade_competency_in_coursemodule($cm, $this->student4->id, $comp2->get('id'), 1, 'Unit test 1');
 
         // OK we have enough data - lets call some API functions and check for expected results.
 
-        $result = api::count_proficient_competencies_in_coursemodule_for_user($cm->id, $u1->id);
+        $result = api::count_proficient_competencies_in_coursemodule_for_user($cm->id, $this->student1->id);
         $this->assertEquals(2, $result);
-        $result = api::count_proficient_competencies_in_coursemodule_for_user($cm->id, $u2->id);
+        $result = api::count_proficient_competencies_in_coursemodule_for_user($cm->id, $this->student2->id);
         $this->assertEquals(1, $result);
-        $result = api::count_proficient_competencies_in_coursemodule_for_user($cm->id, $u3->id);
+        $result = api::count_proficient_competencies_in_coursemodule_for_user($cm->id, $this->student3->id);
         $this->assertEquals(1, $result);
-        $result = api::count_proficient_competencies_in_coursemodule_for_user($cm->id, $u4->id);
+        $result = api::count_proficient_competencies_in_coursemodule_for_user($cm->id, $this->student4->id);
         $this->assertEquals(0, $result);
 
         $result = api::get_least_proficient_competencies_for_coursemodule($cm->id, 0, 2);
@@ -144,7 +170,7 @@ class tool_cmcompetency_api_testcase extends externallib_advanced_testcase {
         $this->assertEquals($result[0]->get('id'), $expected);
 
         // Test list evidence.
-        $result = api::list_evidence_in_coursemodule($u1->id, $cm->id, $comp1->get('id'), 'timecreated', 'ASC');
+        $result = api::list_evidence_in_coursemodule($this->student1->id, $cm->id, $comp1->get('id'), 'timecreated', 'ASC');
         $this->assertEquals($result[0]->get('descidentifier'), 'evidence_manualoverrideincoursemodule');
         $this->assertEquals($result[0]->get('grade'), '1');
         $this->assertEquals($result[0]->get('note'), 'Unit test 1');
@@ -154,49 +180,41 @@ class tool_cmcompetency_api_testcase extends externallib_advanced_testcase {
      * Get a user competency in a course module.
      */
     public function test_get_user_competency_in_coursemodule() {
-        $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
         $lpg = $dg->get_plugin_generator('core_competency');
-        $this->setAdminUser();
 
-        $user = $dg->create_user();
-        $c1 = $dg->create_course();
-
-        $pagegenerator = $this->getDataGenerator()->get_plugin_generator('mod_page');
-        $page = $pagegenerator->create_instance(array('course' => $c1->id));
-
-        $cm = get_coursemodule_from_instance('page', $page->id);
+        $cm = get_coursemodule_from_instance('page', $this->page->id);
 
         // Enrol the user so they can be rated in the course.
         $studentarch = get_archetype_roles('student');
         $studentrole = array_shift($studentarch);
-        $coursecontext = context_course::instance($c1->id);
-        $dg->role_assign($studentrole->id, $user->id, $coursecontext->id);
-        $dg->enrol_user($user->id, $c1->id, $studentrole->id);
+        $coursecontext = context_course::instance($this->course1->id);
+        $dg->role_assign($studentrole->id, $this->student1->id, $coursecontext->id);
+        $dg->enrol_user($this->student1->id, $this->course1->id, $studentrole->id);
 
         $framework = $lpg->create_framework();
-        $comp1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
-        $comp2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
-        $lpg->create_course_competency(array('competencyid' => $comp1->get('id'), 'courseid' => $c1->id));
-        $lpg->create_course_competency(array('competencyid' => $comp2->get('id'), 'courseid' => $c1->id));
+        $comp1 = $lpg->create_competency(array('competencyframeworkid' => $this->framework->get('id')));
+        $comp2 = $lpg->create_competency(array('competencyframeworkid' => $this->framework->get('id')));
+        $lpg->create_course_competency(array('competencyid' => $comp1->get('id'), 'courseid' => $this->course1->id));
+        $lpg->create_course_competency(array('competencyid' => $comp2->get('id'), 'courseid' => $this->course1->id));
         // Link competencies to course module.
         $lpg->create_course_module_competency(array('competencyid' => $comp1->get('id'), 'cmid' => $cm->id));
         $lpg->create_course_module_competency(array('competencyid' => $comp2->get('id'), 'cmid' => $cm->id));
 
         // Create a user competency for comp1.
-        api::grade_competency_in_coursemodule($cm, $user->id, $comp1->get('id'), 3, 'Unit test');
+        api::grade_competency_in_coursemodule($cm, $this->student1->id, $comp1->get('id'), 3, 'Unit test');
 
         // Test for competency already exist in user_competency.
-        $uc = api::get_user_competency_in_coursemodule($cm->id, $user->id, $comp1->get('id'));
+        $uc = api::get_user_competency_in_coursemodule($cm->id, $this->student1->id, $comp1->get('id'));
         $this->assertEquals($comp1->get('id'), $uc->get('competencyid'));
-        $this->assertEquals($user->id, $uc->get('userid'));
+        $this->assertEquals($this->student1->id, $uc->get('userid'));
         $this->assertEquals(3, $uc->get('grade'));
         $this->assertEquals(true, $uc->get('proficiency'));
 
         // Test for competency does not exist in user_competency.
-        $uc2 = api::get_user_competency_in_coursemodule($cm->id, $user->id, $comp2->get('id'));
+        $uc2 = api::get_user_competency_in_coursemodule($cm->id, $this->student1->id, $comp2->get('id'));
         $this->assertEquals($comp2->get('id'), $uc2->get('competencyid'));
-        $this->assertEquals($user->id, $uc2->get('userid'));
+        $this->assertEquals($this->student1->id, $uc2->get('userid'));
         $this->assertEquals(null, $uc2->get('grade'));
         $this->assertEquals(null, $uc2->get('proficiency'));
     }
@@ -205,17 +223,15 @@ class tool_cmcompetency_api_testcase extends externallib_advanced_testcase {
      * Test list courses modules using competency.
      */
     public function test_list_coursesmodules_using_competency() {
-        $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
         $lpg = $dg->get_plugin_generator('core_competency');
         $this->setAdminUser();
 
-        $c1 = $dg->create_course();
         $c2 = $dg->create_course();
 
         $pagegenerator = $this->getDataGenerator()->get_plugin_generator('mod_page');
-        $page = $pagegenerator->create_instance(array('course' => $c1->id));
-        $page1 = $pagegenerator->create_instance(array('course' => $c1->id));
+        $page = $pagegenerator->create_instance(array('course' => $this->course1->id));
+        $page1 = $pagegenerator->create_instance(array('course' => $this->course1->id));
 
         $cm = get_coursemodule_from_instance('page', $page->id);
         $cm1 = get_coursemodule_from_instance('page', $page1->id);
@@ -228,13 +244,13 @@ class tool_cmcompetency_api_testcase extends externallib_advanced_testcase {
 
         $framework = $lpg->create_framework();
         // Create 3 competencies.
-        $comp1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
-        $comp2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
-        $comp3 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
+        $comp1 = $lpg->create_competency(array('competencyframeworkid' => $this->framework->get('id')));
+        $comp2 = $lpg->create_competency(array('competencyframeworkid' => $this->framework->get('id')));
+        $comp3 = $lpg->create_competency(array('competencyframeworkid' => $this->framework->get('id')));
 
         // Link 2 out of 3 to course 1.
-        $lpg->create_course_competency(array('competencyid' => $comp1->get('id'), 'courseid' => $c1->id));
-        $lpg->create_course_competency(array('competencyid' => $comp2->get('id'), 'courseid' => $c1->id));
+        $lpg->create_course_competency(array('competencyid' => $comp1->get('id'), 'courseid' => $this->course1->id));
+        $lpg->create_course_competency(array('competencyid' => $comp2->get('id'), 'courseid' => $this->course1->id));
         // Link 2 out of 3 to course 2.
         $lpg->create_course_competency(array('competencyid' => $comp1->get('id'), 'courseid' => $c2->id));
         $lpg->create_course_competency(array('competencyid' => $comp2->get('id'), 'courseid' => $c2->id));
@@ -271,17 +287,12 @@ class tool_cmcompetency_api_testcase extends externallib_advanced_testcase {
      * Test list_user_competencies_in_coursemodule.
      */
     public function test_list_user_competencies_in_coursemodule() {
-        $this->resetAfterTest();
         $dg = $this->getDataGenerator();
         $lpg = $dg->get_plugin_generator('core_competency');
 
-        $c1 = $dg->create_course();
-        $pagegenerator = $this->getDataGenerator()->get_plugin_generator('mod_page');
-        $page = $pagegenerator->create_instance(array('course' => $c1->id));
-
-        $cm = get_coursemodule_from_instance('page', $page->id);
+        $cm = get_coursemodule_from_instance('page', $this->page->id);
         $sysctx = context_system::instance();
-        $c1ctx = context_course::instance($c1->id);
+        $c1ctx = context_course::instance($this->course1->id);
 
         $teacher1 = $dg->create_user();
         $student1 = $dg->create_user();
@@ -297,17 +308,17 @@ class tool_cmcompetency_api_testcase extends externallib_advanced_testcase {
         assign_capability('moodle/competency:competencygrade', CAP_ALLOW, $cangraderole, $sysctx->id);
 
         // Enrol s1 and s2 as students in course 1.
-        $dg->enrol_user($student1->id, $c1->id, $studentrole->id);
+        $dg->enrol_user($student1->id, $this->course1->id, $studentrole->id);
         // Give permission to view competencies.
         $dg->role_assign($canviewucrole, $teacher1->id, $c1ctx->id);
         // Give permission to rate.
         $dg->role_assign($cangraderole, $teacher1->id, $c1ctx->id);
 
         $framework = $lpg->create_framework();
-        $comp1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
-        $comp2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
-        $lpg->create_course_competency(array('competencyid' => $comp1->get('id'), 'courseid' => $c1->id));
-        $lpg->create_course_competency(array('competencyid' => $comp2->get('id'), 'courseid' => $c1->id));
+        $comp1 = $lpg->create_competency(array('competencyframeworkid' => $this->framework->get('id')));
+        $comp2 = $lpg->create_competency(array('competencyframeworkid' => $this->framework->get('id')));
+        $lpg->create_course_competency(array('competencyid' => $comp1->get('id'), 'courseid' => $this->course1->id));
+        $lpg->create_course_competency(array('competencyid' => $comp2->get('id'), 'courseid' => $this->course1->id));
         // Link competencies to course module.
         $lpg->create_course_module_competency(array('competencyid' => $comp1->get('id'), 'cmid' => $cm->id));
         $lpg->create_course_module_competency(array('competencyid' => $comp2->get('id'), 'cmid' => $cm->id));
@@ -349,4 +360,150 @@ class tool_cmcompetency_api_testcase extends externallib_advanced_testcase {
         }
     }
 
+    /**
+     * Test grade_competency_in_coursemodule.
+     */
+    public function test_grade_competency_in_coursemodule() {
+        $dg = $this->getDataGenerator();
+        $lpg = $dg->get_plugin_generator('core_competency');
+
+        // Create groups of students.
+        $groupingdata = array();
+        $groupingdata['courseid'] = $this->course1->id;
+        $groupingdata['name'] = 'Group assignment grouping';
+
+        $grouping = self::getDataGenerator()->create_grouping($groupingdata);
+
+        $group1data = array();
+        $group1data['courseid'] = $this->course1->id;
+        $group1data['name'] = 'Team 1';
+        $group2data = array();
+        $group2data['courseid'] = $this->course1->id;
+        $group2data['name'] = 'Team 2';
+
+        $group1 = self::getDataGenerator()->create_group($group1data);
+        $group2 = self::getDataGenerator()->create_group($group2data);
+
+        groups_assign_grouping($grouping->id, $group1->id);
+        groups_assign_grouping($grouping->id, $group2->id);
+
+        groups_add_member($group1->id, $this->student1->id);
+        groups_add_member($group1->id, $this->student2->id);
+        groups_add_member($group2->id, $this->student3->id);
+        groups_add_member($group2->id, $this->student4->id);
+
+        // Generate a team assignment.
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
+        $params = array();
+        $params['course'] = $this->course1->id;
+        $params['name'] = 'Assign 1';
+        $params['teamsubmission'] = 1;
+        $params['teamsubmissiongroupingid'] = $grouping->id;
+        $instance = $generator->create_instance($params);
+        $cm1 = get_coursemodule_from_instance('assign', $instance->id);
+
+        // Generate an individual assignment.
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
+        $params = array();
+        $params['course'] = $this->course1->id;
+        $params['name'] = 'Assign 2';
+        $instance = $generator->create_instance($params);
+        $cm2 = get_coursemodule_from_instance('assign', $instance->id);
+
+        // Generate a quiz.
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
+        $params = array();
+        $params['course'] = $this->course1->id;
+        $params['name'] = 'Quiz';
+        $instance = $generator->create_instance($params);
+        $cm3 = get_coursemodule_from_instance('quiz', $instance->id);
+
+        // Create competencies.
+        $comp1 = $lpg->create_competency(array('competencyframeworkid' => $this->framework->get('id')));
+        $comp2 = $lpg->create_competency(array('competencyframeworkid' => $this->framework->get('id')));
+
+        // Link competencies to the course.
+        $lpg->create_course_competency(array('competencyid' => $comp1->get('id'), 'courseid' => $this->course1->id));
+        $lpg->create_course_competency(array('competencyid' => $comp2->get('id'), 'courseid' => $this->course1->id));
+
+        // Link competencies to course modules.
+        $lpg->create_course_module_competency(array('competencyid' => $comp1->get('id'), 'cmid' => $cm1->id));
+        $lpg->create_course_module_competency(array('competencyid' => $comp2->get('id'), 'cmid' => $cm1->id));
+        $lpg->create_course_module_competency(array('competencyid' => $comp1->get('id'), 'cmid' => $cm2->id));
+        $lpg->create_course_module_competency(array('competencyid' => $comp2->get('id'), 'cmid' => $cm2->id));
+        $lpg->create_course_module_competency(array('competencyid' => $comp1->get('id'), 'cmid' => $cm3->id));
+        $lpg->create_course_module_competency(array('competencyid' => $comp2->get('id'), 'cmid' => $cm3->id));
+
+        // Grade for group when the assign is for team submission.
+        api::grade_competency_in_coursemodule($cm1, $this->student1->id, $comp1->get('id'), 1, null, true);
+        // Student1 gets the new grade.
+        $uc = api::get_user_competency_in_coursemodule($cm1->id, $this->student1->id, $comp1->get('id'));
+        $this->assertEquals($comp1->get('id'), $uc->get('competencyid'));
+        $this->assertEquals($this->student1->id, $uc->get('userid'));
+        $this->assertEquals(1, $uc->get('grade'));
+        // Student2 gets the new grade (same team).
+        $uc = api::get_user_competency_in_coursemodule($cm1->id, $this->student2->id, $comp1->get('id'));
+        $this->assertEquals($comp1->get('id'), $uc->get('competencyid'));
+        $this->assertEquals($this->student2->id, $uc->get('userid'));
+        $this->assertEquals(1, $uc->get('grade'));
+        // Student3 does not get the new grade (other team).
+        $uc = api::get_user_competency_in_coursemodule($cm1->id, $this->student3->id, $comp1->get('id'));
+        $this->assertEquals($comp1->get('id'), $uc->get('competencyid'));
+        $this->assertEquals($this->student3->id, $uc->get('userid'));
+        $this->assertEquals(null, $uc->get('grade'));
+
+        // Grade for single student when the assign is for team submission.
+        api::grade_competency_in_coursemodule($cm1, $this->student1->id, $comp1->get('id'), 2, null, false);
+        // Student1 gets the new grade.
+        $uc = api::get_user_competency_in_coursemodule($cm1->id, $this->student1->id, $comp1->get('id'));
+        $this->assertEquals($comp1->get('id'), $uc->get('competencyid'));
+        $this->assertEquals($this->student1->id, $uc->get('userid'));
+        $this->assertEquals(2, $uc->get('grade'));
+        // Student2 does not get the new grade (same team) and keeps previous grade.
+        $uc = api::get_user_competency_in_coursemodule($cm1->id, $this->student2->id, $comp1->get('id'));
+        $this->assertEquals($comp1->get('id'), $uc->get('competencyid'));
+        $this->assertEquals($this->student2->id, $uc->get('userid'));
+        $this->assertEquals(1, $uc->get('grade'));
+        // Student3 does not get the new grade (other team).
+        $uc = api::get_user_competency_in_coursemodule($cm1->id, $this->student3->id, $comp1->get('id'));
+        $this->assertEquals($comp1->get('id'), $uc->get('competencyid'));
+        $this->assertEquals($this->student3->id, $uc->get('userid'));
+        $this->assertEquals(null, $uc->get('grade'));
+
+        // Grade for group when the assign is not for team submission.
+        api::grade_competency_in_coursemodule($cm2, $this->student1->id, $comp1->get('id'), 3, null, true);
+        // Student1 gets the new grade.
+        $uc = api::get_user_competency_in_coursemodule($cm2->id, $this->student1->id, $comp1->get('id'));
+        $this->assertEquals($comp1->get('id'), $uc->get('competencyid'));
+        $this->assertEquals($this->student1->id, $uc->get('userid'));
+        $this->assertEquals(3, $uc->get('grade'));
+        // Student2 does not get the new grade (same team).
+        $uc = api::get_user_competency_in_coursemodule($cm2->id, $this->student2->id, $comp1->get('id'));
+        $this->assertEquals($comp1->get('id'), $uc->get('competencyid'));
+        $this->assertEquals($this->student2->id, $uc->get('userid'));
+        $this->assertEquals(null, $uc->get('grade'));
+        // Student3 does not get the new grade (other team).
+        $uc = api::get_user_competency_in_coursemodule($cm2->id, $this->student3->id, $comp1->get('id'));
+        $this->assertEquals($comp1->get('id'), $uc->get('competencyid'));
+        $this->assertEquals($this->student3->id, $uc->get('userid'));
+        $this->assertEquals(null, $uc->get('grade'));
+
+        // Grade for group when not of type "assign".
+        api::grade_competency_in_coursemodule($cm3, $this->student1->id, $comp1->get('id'), 4, null, true);
+        // Student1 gets the new grade.
+        $uc = api::get_user_competency_in_coursemodule($cm3->id, $this->student1->id, $comp1->get('id'));
+        $this->assertEquals($comp1->get('id'), $uc->get('competencyid'));
+        $this->assertEquals($this->student1->id, $uc->get('userid'));
+        $this->assertEquals(4, $uc->get('grade'));
+        // Student2 does not get the new grade (same team).
+        $uc = api::get_user_competency_in_coursemodule($cm3->id, $this->student2->id, $comp1->get('id'));
+        $this->assertEquals($comp1->get('id'), $uc->get('competencyid'));
+        $this->assertEquals($this->student2->id, $uc->get('userid'));
+        $this->assertEquals(null, $uc->get('grade'));
+        // Student3 does not get the new grade (other team).
+        $uc = api::get_user_competency_in_coursemodule($cm3->id, $this->student3->id, $comp1->get('id'));
+        $this->assertEquals($comp1->get('id'), $uc->get('competencyid'));
+        $this->assertEquals($this->student3->id, $uc->get('userid'));
+        $this->assertEquals(null, $uc->get('grade'));
+    }
 }

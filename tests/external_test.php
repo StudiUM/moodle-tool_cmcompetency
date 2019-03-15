@@ -135,8 +135,6 @@ class tool_cmcompetency_external_testcase extends externallib_advanced_testcase 
 
         $this->expectException('required_capability_exception');
         external::grade_competency_in_coursemodule($cm->id, $this->user->id, $c1->get('id'), 1);
-        // TO DO.
-        // Make a test for grading group.
     }
 
     public function test_data_for_user_competency_summary_in_coursemodule() {

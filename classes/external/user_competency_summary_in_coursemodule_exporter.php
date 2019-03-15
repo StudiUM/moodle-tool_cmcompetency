@@ -25,11 +25,14 @@
 namespace tool_cmcompetency\external;
 defined('MOODLE_INTERNAL') || die();
 
+use context_module;
 use core_competency\user_competency;
 use core_course\external\course_module_summary_exporter;
 use tool_cmcompetency\external\uc_cm_summary_exporter;
 use renderer_base;
 use stdClass;
+
+require_once($CFG->dirroot . '/mod/assign/locallib.php');
 
 /**
  * Class for exporting user competency data with additional related data in a course module.
@@ -58,6 +61,9 @@ class user_competency_summary_in_coursemodule_exporter extends \core\external\ex
             ),
             'coursemodule' => array(
                 'type' => course_module_summary_exporter::read_properties_definition()
+            ),
+            'showapplygroup' => array(
+                'type' => PARAM_BOOL
             )
         );
     }
@@ -76,6 +82,16 @@ class user_competency_summary_in_coursemodule_exporter extends \core\external\ex
         $cm = $modinfo->get_cm($cmid);
         $cmexporter = new course_module_summary_exporter(null, array('cm' => $cm));
         $result->coursemodule = $cmexporter->export($output);
+
+        $result->showapplygroup = false;
+        if ($cm->modname == 'assign') {
+            $context = context_module::instance($cm->id);
+            $assign = new \assign($context, null, null);
+
+            if ($assign->get_instance()->teamsubmission) {
+                $result->showapplygroup = true;
+            }
+        }
 
         return (array) $result;
     }

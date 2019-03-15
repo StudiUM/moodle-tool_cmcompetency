@@ -265,7 +265,7 @@ class external extends external_api {
     }
 
     /**
-     * Returns description of data_for_user_competency_summary_in_course() result value.
+     * Returns description of data_for_user_competency_summary_in_coursemodule() result value.
      *
      * @return \external_description
      */

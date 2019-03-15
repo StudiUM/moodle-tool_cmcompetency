@@ -132,9 +132,10 @@ class tool_cmcompetency_event_testcase extends advanced_testcase {
         $scale = $dg->create_scale(array('scale' => 'A,B,C,D'));
         $course = $dg->create_course();
         $user = $dg->create_user();
+        $user2 = $dg->create_user();
+        $user3 = $dg->create_user();
         $pagegenerator = $this->getDataGenerator()->get_plugin_generator('mod_page');
         $page = $pagegenerator->create_instance(array('course' => $course->id));
-        $cm = get_coursemodule_from_instance('page', $page->id);
         $studentarch = get_archetype_roles('student');
         $studentrole = array_shift($studentarch);
         $scaleconfig = array(array('scaleid' => $scale->id));
@@ -148,20 +149,59 @@ class tool_cmcompetency_event_testcase extends advanced_testcase {
             'scaleid' => $scale->id,
             'scaleconfiguration' => $scaleconfig
         ));
-        // Enrol the user as students in course.
+        // Enrol the users as students in course.
         $dg->enrol_user($user->id, $course->id, $studentrole->id);
+        $dg->enrol_user($user2->id, $course->id, $studentrole->id);
         $lpg->create_course_competency(array(
             'courseid' => $course->id,
             'competencyid' => $c->get('id')));
+
+        // Create groups of students.
+        $groupingdata = array();
+        $groupingdata['courseid'] = $course->id;
+        $groupingdata['name'] = 'Group assignment grouping';
+
+        $grouping = self::getDataGenerator()->create_grouping($groupingdata);
+
+        $group1data = array();
+        $group1data['courseid'] = $course->id;
+        $group1data['name'] = 'Team 1';
+        $group2data = array();
+        $group2data['courseid'] = $course->id;
+        $group2data['name'] = 'Team 2';
+
+        $group1 = self::getDataGenerator()->create_group($group1data);
+        $group2 = self::getDataGenerator()->create_group($group2data);
+
+        groups_assign_grouping($grouping->id, $group1->id);
+        groups_assign_grouping($grouping->id, $group2->id);
+
+        groups_add_member($group1->id, $user->id);
+        groups_add_member($group1->id, $user2->id);
+        groups_add_member($group2->id, $user3->id);
+
+        // Create assignment.
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
+        $params = array();
+        $params['course'] = $course->id;
+        $params['teamsubmission'] = 1;
+        $params['teamsubmissiongroupingid'] = $grouping->id;
+        $instance = $generator->create_instance($params);
+        $cm = get_coursemodule_from_instance('assign', $instance->id);
+
         // Link competency to course module.
         $lpg->create_course_module_competency(array('competencyid' => $c->get('id'), 'cmid' => $cm->id));
         $uc = $lpg->create_user_competency(array(
             'userid' => $user->id,
             'competencyid' => $c->get('id')));
+        $uc2 = $lpg->create_user_competency(array(
+            'userid' => $user2->id,
+            'competencyid' => $c->get('id')));
 
+        // Test for individual evaluations.
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        api::grade_competency_in_coursemodule($cm->id, $user->id, $c->get('id'), 2, true);
+        api::grade_competency_in_coursemodule($cm->id, $user->id, $c->get('id'), 2, null, false);
 
         // Get our event event.
         $events = $sink->get_events();
@@ -180,6 +220,50 @@ class tool_cmcompetency_event_testcase extends advanced_testcase {
         $this->assertEquals($uc->get('competencyid'), $event->other['competencyid']);
         $this->assertEquals(2, $event->other['grade']);
         $this->assertEventContextNotUsed($event);
+        $this->assertDebuggingNotCalled();
+
+        // Test for group evaluations.
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        api::grade_competency_in_coursemodule($cm->id, $user->id, $c->get('id'), 3, null, true);
+
+        // Get our event event.
+        $events = $sink->get_events();
+        // Evidence created.
+        $this->assertCount(4, $events);
+        $evidencecreatedevent1 = $events[0];
+        $event1 = $events[1];
+        $evidencecreatedevent2 = $events[2];
+        $event2 = $events[3];
+
+        // We don't know the order of users in events.
+        if ($uc->get('userid') == $event1->relateduserid) {
+            $uctest1 = $uc;
+            $uctest2 = $uc2;
+        } else {
+            $uctest1 = $uc2;
+            $uctest2 = $uc;
+        }
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\core\event\competency_evidence_created', $evidencecreatedevent1);
+        $this->assertInstanceOf('\tool_cmcompetency\event\user_competency_rated_in_coursemodule', $event1);
+        $this->assertEquals(context_course::instance($course->id)->id, $event1->contextid);
+        $this->assertEquals($course->id, $event1->courseid);
+        $this->assertEquals($cm->id, $event1->other['cmid']);
+        $this->assertEquals($uctest1->get('userid'), $event1->relateduserid);
+        $this->assertEquals($uctest1->get('competencyid'), $event1->other['competencyid']);
+        $this->assertEquals(3, $event1->other['grade']);
+        $this->assertEventContextNotUsed($event1);
+        $this->assertDebuggingNotCalled();
+        $this->assertInstanceOf('\core\event\competency_evidence_created', $evidencecreatedevent2);
+        $this->assertInstanceOf('\tool_cmcompetency\event\user_competency_rated_in_coursemodule', $event2);
+        $this->assertEquals(context_course::instance($course->id)->id, $event2->contextid);
+        $this->assertEquals($course->id, $event2->courseid);
+        $this->assertEquals($cm->id, $event2->other['cmid']);
+        $this->assertEquals($uctest2->get('userid'), $event2->relateduserid);
+        $this->assertEquals($uctest2->get('competencyid'), $event2->other['competencyid']);
+        $this->assertEquals(3, $event2->other['grade']);
+        $this->assertEventContextNotUsed($event2);
         $this->assertDebuggingNotCalled();
     }
 }

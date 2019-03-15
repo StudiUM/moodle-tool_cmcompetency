@@ -42,6 +42,8 @@ use require_login_exception;
 use moodle_exception;
 use required_capability_exception;
 
+require_once($CFG->dirroot . '/mod/assign/locallib.php');
+
 /**
  * Class for doing things with tool cmcompetency.
  *
@@ -245,10 +247,34 @@ class api {
         if ($group === false) {
             return self::grade_user_competency_in_coursemodule($cmorid, $userid, $competencyid, $grade, $note);
         } else {
-            return;
-            // Here when we implement grade in group.
             // Loop in the group users and grade each student.
             // Return the evidence for current user.
+            $cm = $cmorid;
+            if (!is_object($cmorid)) {
+                $cm = get_coursemodule_from_id('', $cmorid, 0, true, MUST_EXIST);
+            }
+            if ($cm->modname == 'assign') {
+                $context = context_module::instance($cm->id);
+                $assign = new \assign($context, null, null);
+
+                if ($assign->get_instance()->teamsubmission) {
+                    $groupid = 0;
+                    if ($group = $assign->get_submission_group($userid)) {
+                        $groupid = $group->id;
+                    }
+                    $members = $assign->get_submission_group_members($groupid, true, $assign->show_only_active_users());
+                    $evidenceforuserid = null;
+                    foreach ($members as $member) {
+                        $evidence = self::grade_user_competency_in_coursemodule($cmorid, $member->id, $competencyid, $grade, $note);
+                        if ($member->id == $userid) {
+                            $evidenceforuserid = $evidence;
+                        }
+                    }
+                    return $evidenceforuserid;
+                }
+            }
+            // No group was graded, we grade only the current user.
+            return self::grade_user_competency_in_coursemodule($cmorid, $userid, $competencyid, $grade, $note);
         }
     }
 
