@@ -576,4 +576,49 @@ class api {
         cmcompetency_viewed_event::create_from_user_competency_viewed_in_coursemodule($ucc)->trigger();
         return true;
     }
+
+    /**
+     * List course modules having at least one competency.
+     *
+     * @param int $courseid the course id
+     * @param int $selectedcmid the current cmid
+     * @param int $defaultcmid the default cmid
+     * @return stdClass[] array of course module object
+     */
+    public static function get_list_course_modules_with_competencies($courseid, $selectedcmid = null, $defaultcmid = null) {
+        global $DB;
+
+        $params = array('course' => $courseid);
+        $sql = 'SELECT DISTINCT(cm.id)
+                  FROM {course_modules} cm
+            RIGHT JOIN {' . \core_competency\course_module_competency::TABLE . '} cmcomp
+                    ON cm.id = cmcomp.cmid
+                 WHERE cm.visible = 1 AND cm.course = :course
+              ORDER BY cm.added ASC';
+
+        $cmids = $DB->get_records_sql($sql, $params);
+        $modinfo = get_fast_modinfo($courseid);
+        $cms = [];
+        if ($defaultcmid) {
+            $cm = $modinfo->cms[$defaultcmid];
+            $cmoutput = new stdClass();
+            $cmoutput->id = $cm->id;
+            $cmoutput->selected = true;
+            $cmoutput->name = $cm->name;
+            $cms[$cm->id] = $cmoutput;
+        }
+
+        foreach ($cmids as $cmid) {
+            $cm = $modinfo->cms[$cmid->id];
+            if ($cm->uservisible) {
+                $cmoutput = new stdClass();
+                $cmoutput->id = $cm->id;
+                $cmoutput->selected = ($cmid->id == $selectedcmid) ? true : false;
+                $cmoutput->name = $cm->name;
+                $cms[$cmid->id] = $cmoutput;
+            }
+        }
+
+        return $cms;
+    }
 }

@@ -15,22 +15,39 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'tool_cmcompetency', language 'en'
+ * Renderer class for tool_cmcompetency
  *
  * @package    tool_cmcompetency
- * @author     Issam Taboubi <issam.taboubi@umontreal.ca>
  * @copyright  2019 Université de Montréal
+ * @author     Issam Taboubi <issam.taboubi@umontreal.ca>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+namespace tool_cmcompetency\output;
 
-$string['competencycmmenu'] = 'Competencies in course module';
-$string['errorinvalidcoursemodule'] = 'Invalid course module.';
-$string['eventusercompetencyratedincoursemodule'] = 'User competency rated in course module.';
-$string['eventusercompetencyviewedincoursemodule'] = 'User competency viewed in a course module.';
-$string['evidence_manualoverrideincoursemodule'] = 'The competency rating was manually set in the course module \'{$a}\'.';
-$string['jumptocm'] = 'Jump to course module';
-$string['nocompetenciesincm'] = 'No competencies have been linked to this course module.';
-$string['nocompetenciesincms'] = 'No competencies have been linked to course modules';
-$string['pluginname'] = 'Course module competency rating';
+defined('MOODLE_INTERNAL') || die;
+
+use plugin_renderer_base;
+use renderable;
+
+/**
+ * Renderer class for course module competency tool.
+ *
+ * @package    tool_cmcompetency
+ * @copyright  2019 Université de Montréal
+ * @author     Issam Taboubi <issam.taboubi@umontreal.ca>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class renderer extends plugin_renderer_base {
+
+    /**
+     * Defer to template.
+     *
+     * @param coursemodule_navigation $nav
+     * @return string html for the page
+     */
+    public function render_coursemodule_navigation(coursemodule_navigation $nav) {
+        $data = $nav->export_for_template($this);
+        return parent::render_from_template('tool_cmcompetency/coursemodule_navigation', $data);
+    }
+}

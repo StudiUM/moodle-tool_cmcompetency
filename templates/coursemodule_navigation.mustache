@@ -1,0 +1,22 @@
+<div class="pull-right well">
+<form class="coursemodule">
+{{#hascoursemodules}}
+    <span>
+    <label for="cm-nav-{{uniqid}}" class="accesshide">{{#str}}jumptocm, tool_cmcompetency{{/str}}</label>
+    <select id="cm-nav-{{uniqid}}">
+        {{#coursemodules}}
+        <option value="{{id}}" {{#selected}}selected="selected"{{/selected}}>{{name}}</option>
+        {{/coursemodules}}
+    </select>
+    </span>
+{{/hascoursemodules}}
+</form>
+</div>
+{{#js}}
+require(['core/form-autocomplete', 'tool_cmcompetency/coursemodule_navigation'], function(autocomplete, nav) {
+    (new nav('#cm-nav-{{uniqid}}', '{{baseurl}}', {{cmid}}, {{courseid}}));
+{{#hascoursemodules}}
+    autocomplete.enhance('#cm-nav-{{uniqid}}', false, false, {{# quote }}{{# str }}jumptocm, tool_cmcompetency{{/ str }}{{/ quote }});
+{{/hascoursemodules}}
+});
+{{/js}}

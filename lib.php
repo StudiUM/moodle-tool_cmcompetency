@@ -24,3 +24,28 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
+
+/**
+ * This function extends the navigation with the report items
+ *
+ * @param navigation_node $navigation The navigation node to extend
+ * @param stdClass $course The course to object for the report
+ * @param stdClass $context The context of the course
+ */
+function tool_cmcompetency_extend_navigation_course($navigation, $course, $context) {
+    global $PAGE;
+    if (!has_capability('moodle/competency:competencygrade', context_course::instance($course->id))) {
+        $params = ['courseid' => $course->id];
+        if ($PAGE->cm && $PAGE->cm->id) {
+            $params['id'] = $PAGE->cm->id;
+        }
+        $path = new moodle_url("/admin/tool/cmcompetency/userreport.php", $params);
+        $node = navigation_node::create(get_string('competencycmmenu', 'tool_cmcompetency'),
+                $path, navigation_node::TYPE_CONTAINER, 'cmp-md', 'competencies');
+        if ($node->check_if_active(URL_MATCH_BASE)) {
+            $node->make_active();
+        }
+        $coursenode = $PAGE->navigation->find($course->id, navigation_node::TYPE_COURSE);
+        $coursenode->add_node($node, 'grades');
+    }
+}

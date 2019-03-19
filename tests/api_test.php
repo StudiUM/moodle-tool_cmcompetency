@@ -506,4 +506,114 @@ class tool_cmcompetency_api_testcase extends externallib_advanced_testcase {
         $this->assertEquals($this->student3->id, $uc->get('userid'));
         $this->assertEquals(null, $uc->get('grade'));
     }
+
+    /*
+     * Test list_user_competencies_in_coursemodule.
+     */
+    public function test_get_list_course_modules_with_competencies() {
+        global $CFG;
+        $this->resetAfterTest(true);
+        $dg = $this->getDataGenerator();
+        $lpg = $dg->get_plugin_generator('core_competency');
+        $this->setAdminUser();
+
+        $u1 = $dg->create_user();
+        $u2 = $dg->create_user();
+        $u3 = $dg->create_user();
+        $c1 = $dg->create_course();
+        $c2 = $dg->create_course();
+
+        $pagegenerator = $this->getDataGenerator()->get_plugin_generator('mod_page');
+        $page = $pagegenerator->create_instance(array('course' => $c1->id));
+        $cmpage1 = get_coursemodule_from_instance('page', $page->id);
+        $page = $pagegenerator->create_instance(array('course' => $c1->id, 'visible' => 0));
+        $cmpage2 = get_coursemodule_from_instance('page', $page->id);
+        $page = $pagegenerator->create_instance(array('course' => $c1->id));
+        $cmpage3 = get_coursemodule_from_instance('page', $page->id);
+        // Page cm for course 2.
+        $pagegenerator = $this->getDataGenerator()->get_plugin_generator('mod_page');
+        $page = $pagegenerator->create_instance(array('course' => $c2->id));
+        $cmpage4 = get_coursemodule_from_instance('page', $page->id);
+
+        $framework = $lpg->create_framework();
+        // Enrol students in the course 1.
+        $studentarch = get_archetype_roles('student');
+        $studentrole = array_shift($studentarch);
+        $coursecontext = context_course::instance($c1->id);
+        $dg->role_assign($studentrole->id, $u1->id, $coursecontext->id);
+        $dg->enrol_user($u1->id, $c1->id, $studentrole->id);
+        $dg->role_assign($studentrole->id, $u2->id, $coursecontext->id);
+        $dg->enrol_user($u2->id, $c1->id, $studentrole->id);
+        $dg->role_assign($studentrole->id, $u3->id, $coursecontext->id);
+        $dg->enrol_user($u3->id, $c1->id, $studentrole->id);
+        // Enrol user1 to the course2.
+        $coursecontext = context_course::instance($c2->id);
+        $dg->role_assign($studentrole->id, $u1->id, $coursecontext->id);
+        $dg->enrol_user($u1->id, $c2->id, $studentrole->id);
+
+        // Turn on availability and a group restriction, and check that it doesn't show users who aren't in the group.
+        $CFG->enableavailability = true;
+
+        $specialgroup = $this->getDataGenerator()->create_group(['courseid' => $c1->id]);
+        $assigngenerator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
+        $assign = $assigngenerator->create_instance([
+                'course' => $c1->id,
+                'grade' => 100,
+                'availability' => json_encode(
+                    \core_availability\tree::get_root_json([\availability_group\condition::get_json($specialgroup->id)])
+                ),
+            ]);
+        $cmassign = get_coursemodule_from_instance('assign', $assign->id);
+        groups_add_member($specialgroup, $u1);
+        groups_add_member($specialgroup, $u2);
+
+        // Create a competency.
+        $comp1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
+
+        // Link competency to a course.
+        $lpg->create_course_competency(array('competencyid' => $comp1->get('id'), 'courseid' => $c1->id));
+
+        // Link competency to course modules.
+        $lpg->create_course_module_competency(array('competencyid' => $comp1->get('id'), 'cmid' => $cmpage1->id));
+        $lpg->create_course_module_competency(array('competencyid' => $comp1->get('id'), 'cmid' => $cmpage2->id));
+        $lpg->create_course_module_competency(array('competencyid' => $comp1->get('id'), 'cmid' => $cmassign->id));
+        // Test for user1.
+        $this->setUser($u1);
+        $cms = \tool_cmcompetency\api::get_list_course_modules_with_competencies($c1->id);
+        // User1 should see only page1 and assign1.
+        $this->assertContains($cmpage1->id, array_keys($cms));
+        $this->assertContains($cmassign->id, array_keys($cms));
+        // Hidden course module.
+        $this->assertNotContains($cmpage2->id, array_keys($cms));
+        // No competency linked for page3.
+        $this->assertNotContains($cmpage3->id, array_keys($cms));
+
+        // Test for user2.
+        $this->setUser($u2);
+        $cms = \tool_cmcompetency\api::get_list_course_modules_with_competencies($c1->id);
+        // User2 should see only page1 and assign1.
+        $this->assertContains($cmpage1->id, array_keys($cms));
+        $this->assertContains($cmassign->id, array_keys($cms));
+        // Hidden course module.
+        $this->assertNotContains($cmpage2->id, array_keys($cms));
+        // No competency linked for page3.
+        $this->assertNotContains($cmpage3->id, array_keys($cms));
+
+        // Test for user3.
+        $this->setUser($u3);
+        $cms = \tool_cmcompetency\api::get_list_course_modules_with_competencies($c1->id);
+        // User3 should see only page1.
+        $this->assertContains($cmpage1->id, array_keys($cms));
+        // User3 does not belong to group.
+        $this->assertNotContains($cmassign->id, array_keys($cms));
+        // Hidden course module.
+        $this->assertNotContains($cmpage2->id, array_keys($cms));
+        // No competency linked for page3.
+        $this->assertNotContains($cmpage3->id, array_keys($cms));
+
+        // Empty course module for user1 for the course2.
+        $this->setUser($u1);
+        $cms = \tool_cmcompetency\api::get_list_course_modules_with_competencies($c2->id);
+        $this->assertEmpty($cms);
+    }
 }
