@@ -110,6 +110,32 @@ class api {
     }
 
     /**
+     * Count all the competencies in a course module.
+     *
+     * @param mixed $cmorid The course module, or its ID.
+     * @return int
+     */
+    public static function count_competencies_in_coursemodule($cmorid) {
+        core_api::require_enabled();
+        $cm = $cmorid;
+        if (!is_object($cmorid)) {
+            $cm = get_coursemodule_from_id('', $cmorid, 0, true, MUST_EXIST);
+        }
+
+        // Check the user have access to the course module.
+        self::validate_course_module($cm);
+        $context = context_module::instance($cm->id);
+
+        $capabilities = array('moodle/competency:coursecompetencyview', 'moodle/competency:coursecompetencymanage');
+        if (!has_any_capability($capabilities, $context)) {
+             throw new required_capability_exception($context, 'moodle/competency:coursecompetencyview', 'nopermissions', '');
+        }
+
+        // OK - all set.
+        return course_module_competency::count_competencies($cm->id);
+    }
+
+    /**
      * Get a user competency in a course module.
      *
      * @param int $cmid The id of the course module to check.

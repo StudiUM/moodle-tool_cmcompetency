@@ -77,6 +77,7 @@ class tool_cmcompetency_api_testcase extends externallib_advanced_testcase {
         $this->page = $pagegenerator->create_instance(array('course' => $this->course1->id));
 
         $this->framework = $lpg->create_framework();
+
         // Enrol students in the course.
         $studentarch = get_archetype_roles('student');
         $studentrole = array_shift($studentarch);
@@ -99,6 +100,11 @@ class tool_cmcompetency_api_testcase extends externallib_advanced_testcase {
         $lpg = $dg->get_plugin_generator('core_competency');
 
         $cm = get_coursemodule_from_instance('page', $this->page->id);
+        $pagegenerator = $this->getDataGenerator()->get_plugin_generator('mod_page');
+        $page1 = $pagegenerator->create_instance(array('course' => $this->course1->id));
+        $page2 = $pagegenerator->create_instance(array('course' => $this->course1->id));
+        $cm1 = get_coursemodule_from_instance('page', $page1->id);
+        $cm2 = get_coursemodule_from_instance('page', $page2->id);
 
         // Create 6 competencies.
         $comp1 = $lpg->create_competency(array('competencyframeworkid' => $this->framework->get('id')));
@@ -123,6 +129,15 @@ class tool_cmcompetency_api_testcase extends externallib_advanced_testcase {
         $lpg->create_course_module_competency(array('competencyid' => $comp4->get('id'), 'cmid' => $cm->id));
         $lpg->create_course_module_competency(array('competencyid' => $comp5->get('id'), 'cmid' => $cm->id));
         $lpg->create_course_module_competency(array('competencyid' => $comp6->get('id'), 'cmid' => $cm->id));
+        // Link competency2 to course module cm1.
+        $lpg->create_course_module_competency(array('competencyid' => $comp2->get('id'), 'cmid' => $cm1->id));
+        // Test count competencies in cm, cm1 and cm2.
+        $nbcompcm = api::count_competencies_in_coursemodule($cm);
+        $this->assertEquals(6, $nbcompcm);
+        $nbcompcm1 = api::count_competencies_in_coursemodule($cm1);
+        $this->assertEquals(1, $nbcompcm1);
+        $nbcompcm2 = api::count_competencies_in_coursemodule($cm2);
+        $this->assertEquals(0, $nbcompcm2);
 
         // Rate some competencies.
         // User 1.

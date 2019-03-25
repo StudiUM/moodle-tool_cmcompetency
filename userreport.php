@@ -77,6 +77,9 @@ if ($currentcmid > 0) {
         echo $output->container('', 'clearfix');
         echo $OUTPUT->notification(get_string('nocompetenciesincm', 'tool_cmcompetency'),
                 \core\output\notification::NOTIFY_INFO);
+    } else {
+        $report = new \tool_cmcompetency\output\report($currentcmid);
+        echo $output->render($report);
     }
 } else {
     echo $output->heading($title, 3);

@@ -1,0 +1,95 @@
+{{!
+    @template tool_cmcompetency/report
+
+    Example context (json):
+    {
+        "usercompetencies": {
+            "competency"
+            "usercompetencycoursemodule",
+            "evidence"
+        },
+        "statistics": {
+            "competencycount": 4,
+            "canbegradedincourse": true,
+            "proficientcompetencycount": 3,
+            "proficientcompetencypercentage": 75,
+            "proficientcompetencypercentageformatted": 75.0,
+        },
+        "hascompetencies": true
+    }
+
+}}
+{{#statistics}}
+{{> tool_cmcompetency/coursemodule_competency_statistics }}
+{{/statistics}}
+{{#hascompetencies}}
+<div class="colexpall-cmcompetency">
+    <div class="collapsible-actions">
+        <a role="button" href="#" class="collapseexpand expand-all" title="{{#str}}clicktohideshow{{/str}}">{{#str}}expandall{{/str}}</a>
+    </div>
+</div>
+{{/hascompetencies}}
+<div class="cmcompetencyreport">
+{{#usercompetencies}}
+<div class="competency-detail" id="comp-{{competency.competency.id}}">
+    <div class="x_panel tile panel-collapsed">
+        <div class="x_title">
+            <a role="button" class="collapse-link" href="#" title="{{#str}}clicktohideshow{{/str}}"><i class="fa fa-chevron-right"></i></a>
+            <h4 class="truncate">
+                <a href="#"
+                   data-action="competency-dialogue"
+                   data-includecourses="true"
+                   data-id="{{competency.competency.id}}"
+                   title="{{competency.competency.shortname}}"
+                   role="button">
+                    {{competency.competency.shortname}} <em>
+                        <small>{{competency.competency.idnumber}}</small>
+                    </em>
+                </a>
+            </h4>
+            <span class="level">
+                {{#usercompetencycoursemodule}}
+                    {{#grade}}
+                    <span class="label {{^proficiency}}label-important{{/proficiency}}">{{gradename}}</span>
+                    {{/grade}}
+                    {{^grade}}<span class="cmusercompetency-notrated">{{#str}}notrated, report_competency{{/str}}</span>{{/grade}}
+                {{/usercompetencycoursemodule}}
+            </span>
+        </div>
+        <div class="x_content">
+           <div data-region="competency-summary">
+                <dl>
+                    {{#usercompetencycoursemodule}}
+                    <dt>{{#str}}proficient, tool_lp{{/str}}</dt>
+                    <dd>
+                        <span class="label{{^proficiency}} label-important{{/proficiency}} pull-left">
+                            {{proficiencyname}}
+                        </span>
+                    </dd>
+                    <dt>{{#str}}rating, tool_lp{{/str}}</dt>
+                    <dd>{{gradename}}</dd>
+                    {{/usercompetencycoursemodule}}
+                </dl>
+                <dl data-region="evidence-listing">
+                    <dt>{{#str}}evidence, tool_lp{{/str}}</dt>
+                    <dd>
+                        {{#evidence}}
+                            {{> tool_lp/evidence_summary }}
+                        {{/evidence}}
+                        {{^evidence}}
+                            <p>{{#str}}noevidence, tool_lp{{/str}}</p>
+                        {{/evidence}}
+                    </dd>
+                </dl>
+            </div> 
+        </div>
+    </div>
+</div>
+{{/usercompetencies}}
+</div>
+{{#js}}
+require(['tool_cmcompetency/report_cmcompetency_display', 'tool_lp/competencydialogue'], function(cmDisplay, Compdialogue) {
+    (new cmDisplay('.colexpall-cmcompetency', '.cmcompetencyreport'));
+    Compdialogue.init();
+});
+{{/js}}

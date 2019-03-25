@@ -2,3 +2,109 @@
     vertical-align: unset;
     margin-right: 10px;
 }
+.colexpall-cmcompetency {
+    clear: both;
+}
+.cmcompetencyreport .x_panel {
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 5px 0;
+    display: inline-block;
+    opacity: 1;
+    transition: all 250ms ease-in-out;
+}
+.cmcompetencyreport .x_title {
+    border-bottom: 1px solid transparent;
+    padding: 2px 5px;
+    transition: all 250ms ease-in-out;
+}
+.cmcompetencyreport .panel-collapsed .x_title {
+    border-bottom-color: #cfd1d5;
+}
+.cmcompetencyreport .x_title span.cmusercompetency-notrated {
+    color: #333;
+}
+.cmcompetencyreport .x_title h4 a:hover {
+    text-decoration: none;
+}
+.cmcompetencyreport .x_title .filter {
+    width: 40%;
+    float: right;
+}
+.cmcompetencyreport .x_title h4 {
+    margin: 5px 0 6px;
+    display: inline-block;
+    font-size: 18px;
+    line-height: 1.2em;
+    font-weight: 400;
+    transition: all 250ms ease-in-out 0s;
+}
+.cmcompetencyreport .panel-collapsed .x_title h4 {
+    max-width: calc(100% - 150px);
+}
+.cmcompetencyreport .panel-collapsed .x_content {
+    display: none;
+}
+.cmcompetencyreport .panel-collapsed .level {
+    opacity: 1;
+    visibility: visible;
+}
+.cmcompetencyreport .level {
+    display: block;
+    font-size: 15px;
+    font-weight: bold;
+    line-height: 30px;
+    min-width: 20px;
+    opacity: 0;
+    position: absolute;
+    right: 5px;
+    top: 7px;
+    transition: all 250ms ease-in-out 0s;
+    visibility: hidden;
+}
+.cmcompetencyreport .x_title span {
+    color: #fff;
+}
+.cmcompetencyreport .x_title small {
+    color: #333;
+}
+.cmcompetencyreport .x_title h4 small {
+    font-size: 14px;
+}
+.cmcompetencyreport .x_content {
+    padding: 0 5px 6px;
+    padding-left: 25px;
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+    float: left;
+    clear: both;
+}
+.cmcompetencyreport .toggle {
+    float: left;
+    margin: 0;
+    padding-top: 16px;
+    width: 70px;
+}
+.cmcompetencyreport .toggle a {
+    padding: 15px 15px 0;
+    margin: 0;
+    cursor: pointer;
+}
+.cmcompetencyreport .toggle a i {
+    font-size: 26px;
+}
+.cmcompetencyreport a.collapse-link {
+    display: inline-block;
+    padding: 5px;
+    color: #999;
+    font-size: 14px;
+    cursor: pointer;
+    text-align: center;
+    vertical-align: top;
+    width: 20px;
+}
+.cmcompetencyreport a.collapse-link:hover {
+    background: #f5f7fa;
+}

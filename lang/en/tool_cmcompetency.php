@@ -34,3 +34,4 @@ $string['jumptocm'] = 'Jump to course module';
 $string['nocompetenciesincm'] = 'No competencies have been linked to this course module.';
 $string['nocompetenciesincms'] = 'No competencies have been linked to course modules';
 $string['pluginname'] = 'Course module competency rating';
+$string['xcompetenciesproficientoutofyincoursemodule'] = 'You are proficient in {$a->x} out of {$a->y} competencies in this course module.';
