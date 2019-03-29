@@ -24,6 +24,7 @@
  */
 
 require_once(__DIR__ . '/../../../config.php');
+global $USER;
 
 $currentcmid = optional_param('id', null, PARAM_INT);
 $courseid = required_param('courseid', PARAM_INT);
@@ -42,7 +43,6 @@ if (empty($cmids)) {
         $cmwithnocomp = true;
     }
 }
-
 require_login($course);
 if ($currentcmid > 0) {
     $modinfo = get_fast_modinfo($course->id);
@@ -63,29 +63,35 @@ $coursename = format_string($course->fullname, true, array('context' => $context
 $PAGE->set_heading($coursename);
 $output = $PAGE->get_renderer('tool_cmcompetency');
 echo $output->header();
-
-if ($currentcmid > 0) {
-    $image = html_writer::empty_tag('img',
-            array('src' => $modinfo->cms[$currentcmid]->get_icon_url()->out(), 'class' => 'cm-competency-img'));
-    echo $output->heading($image . format_string($cm->name), 2);
-    echo $output->heading($title, 3);
-    $baseurl = new moodle_url('/admin/tool/cmcompetency/userreport.php');
-    $cmiddefault = ($cmwithnocomp) ? $currentcmid : null;
-    $nav = new \tool_cmcompetency\output\coursemodule_navigation($cm, $course, $baseurl, $cmiddefault);
-    echo $output->render($nav);
-    if ($cmwithnocomp) {
-        echo $output->container('', 'clearfix');
-        echo $OUTPUT->notification(get_string('nocompetenciesincm', 'tool_cmcompetency'),
-                \core\output\notification::NOTIFY_INFO);
+if (is_enrolled($context, $USER->id, 'moodle/competency:coursecompetencygradable')) {
+    if ($currentcmid > 0) {
+        $image = html_writer::empty_tag('img',
+                array('src' => $modinfo->cms[$currentcmid]->get_icon_url()->out(), 'class' => 'cm-competency-img'));
+        echo $output->heading($image . format_string($cm->name), 2);
+        echo $output->heading($title, 3);
+        $baseurl = new moodle_url('/admin/tool/cmcompetency/userreport.php');
+        $cmiddefault = ($cmwithnocomp) ? $currentcmid : null;
+        $nav = new \tool_cmcompetency\output\coursemodule_navigation($cm, $course, $baseurl, $cmiddefault);
+        echo $output->render($nav);
+        if ($cmwithnocomp) {
+            echo $output->container('', 'clearfix');
+            echo $OUTPUT->notification(get_string('nocompetenciesincm', 'tool_cmcompetency'),
+                    \core\output\notification::NOTIFY_INFO);
+        } else {
+            $report = new \tool_cmcompetency\output\report($currentcmid);
+            echo $output->render($report);
+        }
     } else {
-        $report = new \tool_cmcompetency\output\report($currentcmid);
-        echo $output->render($report);
+        echo $output->heading($title, 3);
+        echo $output->container('', 'clearfix');
+        echo $OUTPUT->notification(get_string('nocompetenciesincms', 'tool_cmcompetency'),
+                \core\output\notification::NOTIFY_INFO);
     }
 } else {
     echo $output->heading($title, 3);
-    echo $output->container('', 'clearfix');
-    echo $OUTPUT->notification(get_string('nocompetenciesincms', 'tool_cmcompetency'),
-            \core\output\notification::NOTIFY_INFO);
+    echo $output->container('', 'clearfix margin-notification');
+    echo $OUTPUT->notification(get_string('cannotaccessreportpage', 'tool_cmcompetency'),
+                \core\output\notification::NOTIFY_ERROR);
 }
 
 echo $OUTPUT->footer();

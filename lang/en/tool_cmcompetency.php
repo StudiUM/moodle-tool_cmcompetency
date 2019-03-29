@@ -25,6 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['cannotaccessreportpage'] = 'Sorry, you do not have permissions to display this page.';
 $string['competencycmmenu'] = 'Competencies in course module';
 $string['errorinvalidcoursemodule'] = 'Invalid course module.';
 $string['eventusercompetencyratedincoursemodule'] = 'User competency rated in course module.';

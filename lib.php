@@ -33,8 +33,8 @@ defined('MOODLE_INTERNAL') || die();
  * @param stdClass $context The context of the course
  */
 function tool_cmcompetency_extend_navigation_course($navigation, $course, $context) {
-    global $PAGE;
-    if (!has_capability('moodle/competency:competencygrade', context_course::instance($course->id))) {
+    global $PAGE, $USER;
+    if (is_enrolled($context, $USER->id, 'moodle/competency:coursecompetencygradable')) {
         $params = ['courseid' => $course->id];
         if ($PAGE->cm && $PAGE->cm->id) {
             $params['id'] = $PAGE->cm->id;
