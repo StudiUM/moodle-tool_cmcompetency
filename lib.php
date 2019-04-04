@@ -41,7 +41,7 @@ function tool_cmcompetency_extend_navigation_course($navigation, $course, $conte
         }
         $path = new moodle_url("/admin/tool/cmcompetency/userreport.php", $params);
         $node = navigation_node::create(get_string('competencycmmenu', 'tool_cmcompetency'),
-                $path, navigation_node::TYPE_CONTAINER, 'cmp-md', 'competencies');
+                $path, navigation_node::TYPE_CONTAINER, 'cmp-md', 'competencies', new pix_icon('i/competencies', ''));
         if ($node->check_if_active(URL_MATCH_BASE)) {
             $node->make_active();
         }
