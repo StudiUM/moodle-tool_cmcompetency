@@ -392,7 +392,7 @@ class api {
     }
 
     /**
-     * Validate if current user have acces to the course_module if hidden.
+     * Validate if current user have access to the course_module if hidden.
      *
      * @param mixed $cmmixed The cm_info class, course module record or its ID.
      * @param bool $throwexception Throw an exception or not.
@@ -646,5 +646,50 @@ class api {
         }
 
         return $cms;
+    }
+
+    /**
+     * Checks if the course module is available for this user at this time.
+     *
+     * @param stdClass $cm
+     * @param stdClass $user
+     * @return boolean
+     */
+    public static function is_cm_available_for_user($cm, $user) {
+        $modinfo = get_fast_modinfo($cm->course, $user->id);
+        $cm = $modinfo->get_cm($cm->id);
+        return $cm->uservisible;
+    }
+
+    /**
+     * Returns all users who can be graded for this course module.
+     *
+     * @param context_course $context
+     * @param stdClass $cm
+     * @param int $currentgroup
+     * @param boolean $onlyone True if we return only one result, false if we return all of them.
+     * @return array
+     */
+    public static function get_cm_gradable_users($context, $cm, $currentgroup = 0, $onlyone = false) {
+        global $CFG;
+
+         // Fetch showactive.
+        $defaultgradeshowactiveenrol = !empty($CFG->grade_report_showonlyactiveenrol);
+        $showonlyactiveenrol = get_user_preferences('grade_report_showonlyactiveenrol', $defaultgradeshowactiveenrol);
+        $showonlyactiveenrol = $showonlyactiveenrol || !has_capability('moodle/course:viewsuspendedusers', $context);
+
+        // Get the users enrolled in the courses and who can see this course module.
+        $enrolled = get_enrolled_users($context, 'moodle/competency:coursecompetencygradable', $currentgroup, 'u.*', null, 0, 0,
+                $showonlyactiveenrol);
+        $gradable = array();
+        foreach ($enrolled as $user) {
+            if (self::is_cm_available_for_user($cm, $user)) {
+                $gradable[$user->id] = $user;
+                if ($onlyone) {
+                    break;
+                }
+            }
+        }
+        return $gradable;
     }
 }

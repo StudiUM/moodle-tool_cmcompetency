@@ -631,4 +631,162 @@ class tool_cmcompetency_api_testcase extends externallib_advanced_testcase {
         $cms = \tool_cmcompetency\api::get_list_course_modules_with_competencies($c2->id);
         $this->assertEmpty($cms);
     }
+
+    /**
+     * Test is_cm_available_for_user.
+     */
+    public function test_is_cm_available_for_user() {
+        global $CFG;
+
+        $dg = $this->getDataGenerator();
+        $lpg = $dg->get_plugin_generator('core_competency');
+
+        // Create groups of students.
+        $groupingdata = array();
+        $groupingdata['courseid'] = $this->course1->id;
+        $groupingdata['name'] = 'Group assignment grouping';
+
+        $grouping = self::getDataGenerator()->create_grouping($groupingdata);
+
+        $group1data = array();
+        $group1data['courseid'] = $this->course1->id;
+        $group1data['name'] = 'Team 1';
+        $group2data = array();
+        $group2data['courseid'] = $this->course1->id;
+        $group2data['name'] = 'Team 2';
+
+        $group1 = self::getDataGenerator()->create_group($group1data);
+        $group2 = self::getDataGenerator()->create_group($group2data);
+
+        groups_assign_grouping($grouping->id, $group1->id);
+        groups_assign_grouping($grouping->id, $group2->id);
+
+        groups_add_member($group1->id, $this->student1->id);
+        groups_add_member($group1->id, $this->student2->id);
+        groups_add_member($group2->id, $this->student3->id);
+        groups_add_member($group2->id, $this->student4->id);
+
+        // Turn on availability and a group restriction and create a quiz for Team 1.
+        $CFG->enableavailability = true;
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
+        $params = array();
+        $params['course'] = $this->course1->id;
+        $params['name'] = 'Quiz1';
+        $params['availability'] = json_encode(
+                    \core_availability\tree::get_root_json([\availability_group\condition::get_json($group1->id)])
+                );
+        $instance = $generator->create_instance($params);
+        $cm1 = get_coursemodule_from_instance('quiz', $instance->id);
+
+        // Create a quiz for everybody.
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
+        $params = array();
+        $params['course'] = $this->course1->id;
+        $params['name'] = 'Quiz2';
+        $instance = $generator->create_instance($params);
+        $cm2 = get_coursemodule_from_instance('quiz', $instance->id);
+
+        // Create a competency and link it to the course and course modules.
+        $comp1 = $lpg->create_competency(array('competencyframeworkid' => $this->framework->get('id')));
+        $lpg->create_course_competency(array('competencyid' => $comp1->get('id'), 'courseid' => $this->course1->id));
+        $lpg->create_course_module_competency(array('competencyid' => $comp1->get('id'), 'cmid' => $cm1->id));
+        $lpg->create_course_module_competency(array('competencyid' => $comp1->get('id'), 'cmid' => $cm2->id));
+
+        // Checks that only Team 1 sees Quiz1.
+        $isavailable = api::is_cm_available_for_user($cm1, $this->student1);
+        $this->assertTrue($isavailable);
+        $isavailable = api::is_cm_available_for_user($cm1, $this->student2);
+        $this->assertTrue($isavailable);
+        $isavailable = api::is_cm_available_for_user($cm1, $this->student3);
+        $this->assertFalse($isavailable);
+        $isavailable = api::is_cm_available_for_user($cm1, $this->student4);
+        $this->assertFalse($isavailable);
+
+        // Checks that everybody see Quiz2.
+        $isavailable = api::is_cm_available_for_user($cm2, $this->student1);
+        $this->assertTrue($isavailable);
+        $isavailable = api::is_cm_available_for_user($cm2, $this->student2);
+        $this->assertTrue($isavailable);
+        $isavailable = api::is_cm_available_for_user($cm2, $this->student3);
+        $this->assertTrue($isavailable);
+        $isavailable = api::is_cm_available_for_user($cm2, $this->student4);
+        $this->assertTrue($isavailable);
+    }
+
+    /**
+     * Test get_cm_gradable_users.
+     */
+    public function test_get_cm_gradable_users() {
+        global $CFG;
+
+        $dg = $this->getDataGenerator();
+        $lpg = $dg->get_plugin_generator('core_competency');
+
+        // Create groups of students.
+        $groupingdata = array();
+        $groupingdata['courseid'] = $this->course1->id;
+        $groupingdata['name'] = 'Group assignment grouping';
+
+        $grouping = self::getDataGenerator()->create_grouping($groupingdata);
+
+        $group1data = array();
+        $group1data['courseid'] = $this->course1->id;
+        $group1data['name'] = 'Team 1';
+        $group2data = array();
+        $group2data['courseid'] = $this->course1->id;
+        $group2data['name'] = 'Team 2';
+
+        $group1 = self::getDataGenerator()->create_group($group1data);
+        $group2 = self::getDataGenerator()->create_group($group2data);
+
+        groups_assign_grouping($grouping->id, $group1->id);
+        groups_assign_grouping($grouping->id, $group2->id);
+
+        groups_add_member($group1->id, $this->student1->id);
+        groups_add_member($group1->id, $this->student2->id);
+        groups_add_member($group2->id, $this->student3->id);
+        groups_add_member($group2->id, $this->student4->id);
+
+        // Turn on availability and a group restriction and create a quiz for Team 1.
+        $CFG->enableavailability = true;
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
+        $params = array();
+        $params['course'] = $this->course1->id;
+        $params['name'] = 'Quiz1';
+        $params['availability'] = json_encode(
+                    \core_availability\tree::get_root_json([\availability_group\condition::get_json($group1->id)])
+                );
+        $instance = $generator->create_instance($params);
+        $cm1 = get_coursemodule_from_instance('quiz', $instance->id);
+
+        // Create a quiz for everybody.
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
+        $params = array();
+        $params['course'] = $this->course1->id;
+        $params['name'] = 'Quiz2';
+        $instance = $generator->create_instance($params);
+        $cm2 = get_coursemodule_from_instance('quiz', $instance->id);
+
+        // Create a competency and link it to the course and course modules.
+        $comp1 = $lpg->create_competency(array('competencyframeworkid' => $this->framework->get('id')));
+        $lpg->create_course_competency(array('competencyid' => $comp1->get('id'), 'courseid' => $this->course1->id));
+        $lpg->create_course_module_competency(array('competencyid' => $comp1->get('id'), 'cmid' => $cm1->id));
+        $lpg->create_course_module_competency(array('competencyid' => $comp1->get('id'), 'cmid' => $cm2->id));
+
+        // Checks that only Team 1 sees Quiz1.
+        $coursecontext = context_course::instance($this->course1->id);
+        $students = api::get_cm_gradable_users($coursecontext, $cm1);
+        $this->assertEquals(2, count($students));
+        $this->assertContains($this->student1->id, array_keys($students));
+        $this->assertContains($this->student2->id, array_keys($students));
+
+        // Checks that everybody see Quiz2.
+        $coursecontext = context_course::instance($this->course1->id);
+        $students = api::get_cm_gradable_users($coursecontext, $cm2);
+        $this->assertEquals(4, count($students));
+        $this->assertContains($this->student1->id, array_keys($students));
+        $this->assertContains($this->student2->id, array_keys($students));
+        $this->assertContains($this->student3->id, array_keys($students));
+        $this->assertContains($this->student4->id, array_keys($students));
+    }
 }

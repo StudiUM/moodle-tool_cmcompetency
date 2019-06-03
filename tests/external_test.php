@@ -86,7 +86,7 @@ class tool_cmcompetency_external_testcase extends externallib_advanced_testcase 
         $this->userrole = create_role('User role', 'userrole', 'learning plan user role description');
 
         assign_capability('moodle/competency:competencymanage', CAP_ALLOW, $this->creatorrole, $syscontext->id);
-        assign_capability('moodle/competency:competencycompetencyconfigure', CAP_ALLOW, $this->creatorrole, $syscontext->id);
+        assign_capability('moodle/competency:coursecompetencyconfigure', CAP_ALLOW, $this->creatorrole, $syscontext->id);
         assign_capability('moodle/competency:competencyview', CAP_ALLOW, $this->userrole, $syscontext->id);
         assign_capability('moodle/competency:competencygrade', CAP_ALLOW, $this->creatorrole, $syscontext->id);
 
@@ -126,7 +126,7 @@ class tool_cmcompetency_external_testcase extends externallib_advanced_testcase 
 
         $evidence = external::grade_competency_in_coursemodule($cm->id, $this->user->id, $c1->get('id'), 1, 'Evil note', false);
 
-        $this->assertEquals('The competency rating was manually set in the course module \'Page: Page 1\'.',
+        $this->assertEquals(get_string('evidence_manualoverrideincoursemodule', 'tool_cmcompetency', 'Page: Page 1'),
                 $evidence->description);
         $this->assertEquals('A', $evidence->gradename);
         $this->assertEquals('Evil note', $evidence->note);
