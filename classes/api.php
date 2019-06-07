@@ -596,8 +596,6 @@ class api {
 
         // Validate the course, this will throw an exception if not valid.
         self::validate_course($cm->course);
-        // Validate the course module, this will throw an exception if not valid.
-        self::validate_course_module($cm->id);
 
         cmcompetency_viewed_event::create_from_user_competency_viewed_in_coursemodule($ucc)->trigger();
         return true;
