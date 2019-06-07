@@ -714,9 +714,9 @@ class tool_cmcompetency_api_testcase extends externallib_advanced_testcase {
     }
 
     /**
-     * Test get_cm_gradable_users.
+     * Test get_cm_gradable_users when the activity has a group restriction.
      */
-    public function test_get_cm_gradable_users() {
+    public function test_get_cm_gradable_users_grouprestriction() {
         global $CFG;
 
         $dg = $this->getDataGenerator();
@@ -786,6 +786,68 @@ class tool_cmcompetency_api_testcase extends externallib_advanced_testcase {
         $this->assertEquals(4, count($students));
         $this->assertContains($this->student1->id, array_keys($students));
         $this->assertContains($this->student2->id, array_keys($students));
+        $this->assertContains($this->student3->id, array_keys($students));
+        $this->assertContains($this->student4->id, array_keys($students));
+    }
+
+    /**
+     * Test get_cm_gradable_users for different groups.
+     */
+    public function test_get_cm_gradable_users_groups() {
+        global $CFG;
+
+        $dg = $this->getDataGenerator();
+        $lpg = $dg->get_plugin_generator('core_competency');
+
+        // Create groups of students.
+        $groupingdata = array();
+        $groupingdata['courseid'] = $this->course1->id;
+        $groupingdata['name'] = 'Group assignment grouping';
+
+        $grouping = self::getDataGenerator()->create_grouping($groupingdata);
+
+        $group1data = array();
+        $group1data['courseid'] = $this->course1->id;
+        $group1data['name'] = 'Team 1';
+        $group2data = array();
+        $group2data['courseid'] = $this->course1->id;
+        $group2data['name'] = 'Team 2';
+
+        $group1 = self::getDataGenerator()->create_group($group1data);
+        $group2 = self::getDataGenerator()->create_group($group2data);
+
+        groups_assign_grouping($grouping->id, $group1->id);
+        groups_assign_grouping($grouping->id, $group2->id);
+
+        groups_add_member($group1->id, $this->student1->id);
+        groups_add_member($group1->id, $this->student2->id);
+        groups_add_member($group2->id, $this->student3->id);
+        groups_add_member($group2->id, $this->student4->id);
+
+        // Create a quiz.
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
+        $params = array();
+        $params['course'] = $this->course1->id;
+        $params['name'] = 'Quiz1';
+        $instance = $generator->create_instance($params);
+        $cm1 = get_coursemodule_from_instance('quiz', $instance->id);
+
+        // Create a competency and link it to the course and course modules.
+        $comp1 = $lpg->create_competency(array('competencyframeworkid' => $this->framework->get('id')));
+        $lpg->create_course_competency(array('competencyid' => $comp1->get('id'), 'courseid' => $this->course1->id));
+        $lpg->create_course_module_competency(array('competencyid' => $comp1->get('id'), 'cmid' => $cm1->id));
+
+        $coursecontext = context_course::instance($this->course1->id);
+
+        // Check group members of Team 1.
+        $students = api::get_cm_gradable_users($coursecontext, $cm1, $group1->id);
+        $this->assertEquals(2, count($students));
+        $this->assertContains($this->student1->id, array_keys($students));
+        $this->assertContains($this->student2->id, array_keys($students));
+
+        // Check group members of Team 2.
+        $students = api::get_cm_gradable_users($coursecontext, $cm1, $group2->id);
+        $this->assertEquals(2, count($students));
         $this->assertContains($this->student3->id, array_keys($students));
         $this->assertContains($this->student4->id, array_keys($students));
     }
