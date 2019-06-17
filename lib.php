@@ -49,3 +49,36 @@ function tool_cmcompetency_extend_navigation_course($navigation, $course, $conte
         $coursenode->add_node($node, 'grades');
     }
 }
+
+/**
+ * Serve the manage editor form as a fragment.
+ *
+ * @param array $args List of named arguments for the fragment loader.
+ * @return string
+ */
+function tool_cmcompetency_output_fragment_grade_cm($args) {
+    global $CFG, $DB;
+
+    require_once($CFG->libdir.'/formslib.php');
+    require_once($CFG->dirroot . '/admin/tool/cmcompetency/classes/form/grade_cm.php');
+    $args = (object) $args;
+    $contextcm = context::instance_by_id($args->contextid);
+    $editoroptions = \tool_cmcompetency\form\grade_cm::build_editor_options($contextcm);
+
+    $formoptions = ['editoroptions' => $editoroptions,
+            'contextid' => $args->contextid,
+            'cangrade' => $args->canGrade,
+            'ratingoptions' => $args->ratingOptions,
+            'showapplygroup' => $args->showapplygroup];
+    $mform = new \tool_cmcompetency\form\grade_cm(
+            null,
+            $formoptions,
+            'post',
+            '',
+            ['id' => 'competency_grading_form'],
+            true,
+            []
+        );
+
+    return $mform->render();
+}

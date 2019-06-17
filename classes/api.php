@@ -266,12 +266,12 @@ class api {
      * @param int $grade
      * @param string $note A note to attach to the evidence
      * @param boolean $group If grade is applied for whole group
-     * @return evidence
+     * @return array of evidence
      */
     public static function grade_competency_in_coursemodule($cmorid, $userid, $competencyid, $grade, $note = null, $group = false) {
         core_api::require_enabled();
         if ($group === false) {
-            return self::grade_user_competency_in_coursemodule($cmorid, $userid, $competencyid, $grade, $note);
+            return [$userid => self::grade_user_competency_in_coursemodule($cmorid, $userid, $competencyid, $grade, $note)];
         } else {
             // Loop in the group users and grade each student.
             // Return the evidence for current user.
@@ -289,12 +289,10 @@ class api {
                         $groupid = $group->id;
                     }
                     $members = $assign->get_submission_group_members($groupid, true, $assign->show_only_active_users());
-                    $evidenceforuserid = null;
+                    $evidenceforuserid = [];
                     foreach ($members as $member) {
                         $evidence = self::grade_user_competency_in_coursemodule($cmorid, $member->id, $competencyid, $grade, $note);
-                        if ($member->id == $userid) {
-                            $evidenceforuserid = $evidence;
-                        }
+                        $evidenceforuserid[$member->id] = $evidence;
                     }
                     return $evidenceforuserid;
                 }

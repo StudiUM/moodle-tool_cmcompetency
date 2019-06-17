@@ -33,6 +33,7 @@ use core_competency\api as core_api;
 use tool_cmcompetency\api;
 use tool_cmcompetency\output\user_competency_summary_in_coursemodule;
 use tool_cmcompetency\external\user_competency_summary_in_coursemodule_exporter;
+use tool_cmcompetency\form\grade_cm;
 use external_function_parameters;
 use external_value;
 use context_module;
@@ -132,7 +133,7 @@ class external extends external_api {
             VALUE_REQUIRED
         );
         $note = new external_value(
-            PARAM_NOTAGS,
+            PARAM_RAW,
             'A note to attach to the evidence',
             VALUE_DEFAULT
         );
@@ -167,7 +168,8 @@ class external extends external_api {
      */
     public static function grade_competency_in_coursemodule($cmid, $userid, $competencyid, $grade, $note = null,
             $applygroup = false) {
-        global $USER, $PAGE, $DB;
+        global $USER, $PAGE, $DB, $CFG;
+        require_once($CFG->libdir."/filelib.php");
 
         $params = self::validate_parameters(self::grade_competency_in_coursemodule_parameters(), array(
             'cmid' => $cmid,
@@ -181,15 +183,46 @@ class external extends external_api {
         $context = context_module::instance($params['cmid']);
         self::validate_context($context);
         $output = $PAGE->get_renderer('core');
-
-        $evidence = api::grade_competency_in_coursemodule(
+        $data = [];
+        parse_str($params['note'], $data);
+        $editornote = isset($data['contextid']) ? true : false;
+        $evidences = api::grade_competency_in_coursemodule(
                 $params['cmid'],
                 $params['userid'],
                 $params['competencyid'],
                 $params['grade'],
-                $params['note'],
+                ($editornote) ? '' : $params['note'],
                 $params['applygroup']
         );
+        $evidence = $evidences[$params['userid']];
+
+        // If editor note.
+        if ($editornote) {
+            $contexteditor = \context::instance_by_id($data['contextid']);
+            $editoroptions = grade_cm::build_editor_options($contexteditor);
+            $formoptions = ['editoroptions' => $editoroptions];
+            $formoptions['contextid'] = $data['contextid'];
+            $mform = new grade_cm(null, $formoptions, 'post', '', null, true, $data);
+            if ($validateddata = $mform->get_data()) {
+                file_remove_editor_orphaned_files($validateddata->comment);
+                foreach ($evidences as $e) {
+                    $note = file_save_draft_area_files(
+                        $validateddata->comment['itemid'],
+                        $data['contextid'],
+                        'core_competency',
+                        'evidence_note',
+                        $e->get('id'),
+                        grade_cm::build_editor_options($contexteditor),
+                        $validateddata->comment['text']
+                    );
+                    if ($note) {
+                        $e->set('note', $note);
+                        $e->update();
+                    }
+                }
+            }
+        }
+
         $competency = core_api::read_competency($params['competencyid']);
         $scale = $competency->get_scale();
         $exporter = new evidence_exporter($evidence, array(
