@@ -296,6 +296,15 @@ class tool_cmcompetency_api_testcase extends externallib_advanced_testcase {
         $this->assertContains($cm1->id, $result);
         $this->assertContains($cm2->id, $result);
         $this->assertContains($cm21->id, $result);
+
+        // Hide the course and check that the modules are listed anyway.
+        $student = $dg->create_user();
+        course_change_visibility($this->course1->id, false);
+        $this->setUser($student);
+        $result = api::list_coursesmodules_using_competency($comp1->get('id'));
+        $this->assertEquals(2, count($result));
+        $result = api::list_coursesmodules_using_competency($comp2->get('id'));
+        $this->assertEquals(4, count($result));
     }
 
     /**

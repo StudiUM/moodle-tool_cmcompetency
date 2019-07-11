@@ -72,9 +72,6 @@ class api {
             if (!has_any_capability($capabilities, $context)) {
                 continue;
             }
-            if (!self::validate_course($course, false)) {
-                continue;
-            }
             $cmids = \core_competency\course_module_competency::list_course_modules($competencyid, $course->id);
             $result = array_merge($result, $cmids);
         }
@@ -591,9 +588,6 @@ class api {
             throw new required_capability_exception($ucc->get_context(), 'moodle/competency:usercompetencyview',
                 'nopermissions', '');
         }
-
-        // Validate the course, this will throw an exception if not valid.
-        self::validate_course($cm->course);
 
         cmcompetency_viewed_event::create_from_user_competency_viewed_in_coursemodule($ucc)->trigger();
         return true;

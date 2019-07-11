@@ -121,6 +121,57 @@ class tool_cmcompetency_event_testcase extends advanced_testcase {
     }
 
     /**
+     * Test the user competency viewed event in course module when the course is hidden.
+     */
+    public function test_user_competency_viewed_in_coursemodule_hidden() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $dg = $this->getDataGenerator();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
+        $user = $dg->create_user();
+        $course = $dg->create_course();
+        $fr = $lpg->create_framework();
+
+        $pagegenerator = $this->getDataGenerator()->get_plugin_generator('mod_page');
+        $page = $pagegenerator->create_instance(array('course' => $course->id));
+        $cm = get_coursemodule_from_instance('page', $page->id);
+
+        $c = $lpg->create_competency(array('competencyframeworkid' => $fr->get('id')));
+        $pc = $lpg->create_course_competency(array('courseid' => $course->id, 'competencyid' => $c->get('id')));
+        // Link competency to course module.
+        $lpg->create_course_module_competency(array('competencyid' => $c->get('id'), 'cmid' => $cm->id));
+
+        $params = array('userid' => $user->id, 'competencyid' => $c->get('id'), 'cmid' => $cm->id);
+        $record = (object) $params;
+        $uccm = new user_competency_coursemodule(0, $record);
+        $uccm->create();
+
+        // Hide the course and test as student.
+        course_change_visibility($course->id, false);
+        $this->setUser($user);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        api::user_competency_viewed_in_coursemodule($uccm);
+
+        // Get our event event.
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\tool_cmcompetency\event\user_competency_viewed_in_coursemodule', $event);
+        $this->assertEquals($uccm->get('id'), $event->objectid);
+        $this->assertEquals(context_course::instance($course->id)->id, $event->contextid);
+        $this->assertEquals($uccm->get('userid'), $event->relateduserid);
+        $this->assertEquals($course->id, $event->courseid);
+        $this->assertEquals($cm->id, $event->other['cmid']);
+        $this->assertEquals($c->get('id'), $event->other['competencyid']);
+
+        $this->assertEventContextNotUsed($event);
+        $this->assertDebuggingNotCalled();
+    }
+
+    /**
      * Test the user competency grade rated in course module event.
      *
      */
