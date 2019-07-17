@@ -177,8 +177,8 @@ class behat_tool_cmcompetency_data_generators extends behat_base {
                     'password' => 'teacher'
                 )
         );
-        $datagenerator->enrol_user($teacher->id, $course1->id, 'teacher', 'manual');
-        $datagenerator->enrol_user($teacher->id, $course2->id, 'teacher', 'manual');
+        $datagenerator->enrol_user($teacher->id, $course1->id, 'editingteacher', 'manual');
+        $datagenerator->enrol_user($teacher->id, $course2->id, 'editingteacher', 'manual');
 
         // Create cohort.
         $cohort = $datagenerator->create_cohort(array('contextid' => $cat1ctx->id));
@@ -193,7 +193,8 @@ class behat_tool_cmcompetency_data_generators extends behat_base {
         $options = array('course' => $course1->id, 'name' => 'Module 1',
             'teamsubmission' => 1, 'teamsubmissiongroupingid' => $grouping->id);
         $cm1 = $datagenerator->create_module('assign', $options);
-        $cm2 = $datagenerator->create_module('forum', array('course' => $course1->id, 'name' => 'Module 2'));
+        $cm2 = $datagenerator->create_module('forum', array('course' => $course1->id, 'name' => 'Module 2'),
+            array('groupmode'=> SEPARATEGROUPS, 'groupingid' => $grouping->id));
         $cm21 = $datagenerator->create_module('forum', array('course' => $course1->id, 'name' => 'Forum Test'));
 
         // Create modules for course 2.
