@@ -46,7 +46,10 @@ function tool_cmcompetency_extend_navigation_course($navigation, $course, $conte
             $node->make_active();
         }
         $coursenode = $PAGE->navigation->find($course->id, navigation_node::TYPE_COURSE);
-        $coursenode->add_node($node, 'grades');
+        $gradenode = $coursenode->get('grades');
+        if($gradenode !== false) {
+            $coursenode->add_node($node, 'grades');
+        }
     }
 }
 
