@@ -194,7 +194,7 @@ class behat_tool_cmcompetency_data_generators extends behat_base {
             'teamsubmission' => 1, 'teamsubmissiongroupingid' => $grouping->id);
         $cm1 = $datagenerator->create_module('assign', $options);
         $cm2 = $datagenerator->create_module('forum', array('course' => $course1->id, 'name' => 'Module 2'),
-            array('groupmode'=> SEPARATEGROUPS, 'groupingid' => $grouping->id));
+            array('groupmode' => SEPARATEGROUPS, 'groupingid' => $grouping->id));
         $cm21 = $datagenerator->create_module('forum', array('course' => $course1->id, 'name' => 'Forum Test'));
 
         // Create modules for course 2.

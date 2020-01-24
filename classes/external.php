@@ -163,7 +163,7 @@ class external extends external_api {
      * @param int $competencyid The competency id
      * @param int $grade The new grade value
      * @param string $note A note to add to the evidence
-     * @param bool $applygroup If it is a groupe grade
+     * @param bool $applygroup If it is a group grade
      * @return bool
      */
     public static function grade_competency_in_coursemodule($cmid, $userid, $competencyid, $grade, $note = null,
@@ -185,13 +185,22 @@ class external extends external_api {
         $output = $PAGE->get_renderer('core');
         $data = [];
         parse_str($params['note'], $data);
-        $editornote = isset($data['contextid']) ? true : false;
+        $editornote = api::show_richtext_editor() && isset($data['contextid']) ? true : false;
+        if (isset($data['contextid'])) {
+            if ($editornote) {
+                $notetoadd = '';
+            } else {
+                $notetoadd = $data['comment'];
+            }
+        } else {
+            $notetoadd = $params['note'];
+        }
         $evidences = api::grade_competency_in_coursemodule(
                 $params['cmid'],
                 $params['userid'],
                 $params['competencyid'],
                 $params['grade'],
-                ($editornote) ? '' : $params['note'],
+                $notetoadd,
                 $params['applygroup']
         );
         $evidence = $evidences[$params['userid']];
