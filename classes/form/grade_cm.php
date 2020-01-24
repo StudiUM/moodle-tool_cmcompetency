@@ -31,6 +31,7 @@ if (!defined('MOODLE_INTERNAL')) {
 use moodleform;
 use renderable;
 use MoodleQuickForm;
+use tool_cmcompetency\api;
 require_once($CFG->libdir.'/formslib.php');
 
 /**
@@ -91,9 +92,14 @@ class grade_cm extends moodleform  implements renderable {
             $mform->addElement('html', \html_writer::end_div());
         }
         $mform->addElement('html', \html_writer::start_div('', ['data-region' => 'comment']));
-        $mform->addElement('editor', 'comment',
-            get_string('ratecomment', 'tool_lp'), array('rows' => 4), $editoroptions, '', ['id' => 'comment_' . uniqid()]);
-        $mform->setType('comment', PARAM_CLEANHTML);
+        if (api::show_richtext_editor()) {
+            $mform->addElement('editor', 'comment', get_string('ratecomment', 'tool_lp'), array('rows' => 4), $editoroptions,
+                '', ['id' => 'comment_' . uniqid()]);
+            $mform->setType('comment', PARAM_CLEANHTML);
+        } else {
+            $mform->addElement('textarea', 'comment', get_string('ratecomment', 'tool_lp'),
+                ['id' => 'comment_' . uniqid(), 'cols' => 64, 'rows' => 3]);
+        }
         $mform->addElement('html', \html_writer::end_div());
 
         $buttonarray = [];

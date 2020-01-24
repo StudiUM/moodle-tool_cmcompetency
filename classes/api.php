@@ -53,6 +53,16 @@ require_once($CFG->dirroot . '/mod/assign/locallib.php');
  */
 class api {
 
+    /** @var boolean showrichtexteditor  **/
+    static protected $showrichtexteditor = true;
+
+    /**
+     * Check if course module competency grading is enabled.
+     */
+    public static function show_richtext_editor() {
+        return self::$showrichtexteditor;
+    }
+
     /**
      * List all the course module using a competency.
      *
