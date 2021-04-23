@@ -61,7 +61,7 @@ class tool_cmcompetency_api_testcase extends externallib_advanced_testcase {
     /** @var stdClass $framework Competency framework. */
     protected $framework = null;
 
-    protected function setUp() {
+    protected function setUp(): void {
         $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
         $lpg = $dg->get_plugin_generator('core_competency');
@@ -380,7 +380,7 @@ class tool_cmcompetency_api_testcase extends externallib_advanced_testcase {
             api::list_user_competencies_in_coursemodule($cm->id, $student2->id);
             $this->fail('The user does not belong to this course.');
         } catch (coding_exception $e) {
-            $this->assertContains('The user does not belong to this course.', $e->getMessage());
+            $this->assertStringContainsString('The user does not belong to this course.', $e->getMessage());
         }
     }
 

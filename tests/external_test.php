@@ -60,7 +60,7 @@ class tool_cmcompetency_external_testcase extends externallib_advanced_testcase 
     /**
      * Setup function.
      */
-    protected function setUp() {
+    protected function setUp(): void {
 
         $this->resetAfterTest(true);
 
