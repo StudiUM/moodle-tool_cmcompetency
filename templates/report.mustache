@@ -50,7 +50,7 @@
             <span class="level">
                 {{#usercompetencycoursemodule}}
                     {{#grade}}
-                    <span class="label {{^proficiency}}label-important{{/proficiency}}">{{gradename}}</span>
+                    <span class="badge {{#proficiency}}badge-success{{/proficiency}}{{^proficiency}}badge-danger{{/proficiency}}">{{gradename}}</span>
                     {{/grade}}
                     {{^grade}}<span class="cmusercompetency-notrated">{{#str}}notrated, report_competency{{/str}}</span>{{/grade}}
                 {{/usercompetencycoursemodule}}
@@ -62,7 +62,7 @@
                     {{#usercompetencycoursemodule}}
                     <dt>{{#str}}proficient, tool_lp{{/str}}</dt>
                     <dd>
-                        <span class="label{{^proficiency}} label-important{{/proficiency}} pull-left">
+                        <span class="badge {{#proficiency}}badge-success{{/proficiency}}{{^proficiency}}badge-danger{{/proficiency}} pull-left">
                             {{proficiencyname}}
                         </span>
                     </dd>
