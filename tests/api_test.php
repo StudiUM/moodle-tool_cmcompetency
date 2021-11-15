@@ -285,17 +285,11 @@ class tool_cmcompetency_api_testcase extends externallib_advanced_testcase {
         // Test comp1.
         $result = api::list_coursesmodules_using_competency($comp1->get('id'));
         $this->assertEquals(2, count($result));
-        $this->assertContains($cm->id, $result);
-        $this->assertContains($cm1->id, $result);
-        $this->assertNotContains($cm2->id, $result);
-        $this->assertNotContains($cm21->id, $result);
+        $this->assertEqualsCanonicalizing([$cm->id, $cm1->id], $result);
         // Test comp2.
         $result = api::list_coursesmodules_using_competency($comp2->get('id'));
         $this->assertEquals(4, count($result));
-        $this->assertContains($cm->id, $result);
-        $this->assertContains($cm1->id, $result);
-        $this->assertContains($cm2->id, $result);
-        $this->assertContains($cm21->id, $result);
+        $this->assertEqualsCanonicalizing([$cm->id, $cm1->id, $cm2->id, $cm21->id], $result);
 
         // Hide the course and check that the modules are listed anyway.
         $student = $dg->create_user();
@@ -605,35 +599,26 @@ class tool_cmcompetency_api_testcase extends externallib_advanced_testcase {
         $this->setUser($u1);
         $cms = \tool_cmcompetency\api::get_list_course_modules_with_competencies($c1->id);
         // User1 should see only page1 and assign1.
-        $this->assertContains($cmpage1->id, array_keys($cms));
-        $this->assertContains($cmassign->id, array_keys($cms));
         // Hidden course module.
-        $this->assertNotContains($cmpage2->id, array_keys($cms));
         // No competency linked for page3.
-        $this->assertNotContains($cmpage3->id, array_keys($cms));
+        $this->assertEqualsCanonicalizing([$cmpage1->id, $cmassign->id], array_keys($cms));
 
         // Test for user2.
         $this->setUser($u2);
         $cms = \tool_cmcompetency\api::get_list_course_modules_with_competencies($c1->id);
         // User2 should see only page1 and assign1.
-        $this->assertContains($cmpage1->id, array_keys($cms));
-        $this->assertContains($cmassign->id, array_keys($cms));
         // Hidden course module.
-        $this->assertNotContains($cmpage2->id, array_keys($cms));
         // No competency linked for page3.
-        $this->assertNotContains($cmpage3->id, array_keys($cms));
+        $this->assertEqualsCanonicalizing([$cmpage1->id, $cmassign->id], array_keys($cms));
 
         // Test for user3.
         $this->setUser($u3);
         $cms = \tool_cmcompetency\api::get_list_course_modules_with_competencies($c1->id);
         // User3 should see only page1.
-        $this->assertContains($cmpage1->id, array_keys($cms));
         // User3 does not belong to group.
-        $this->assertNotContains($cmassign->id, array_keys($cms));
         // Hidden course module.
-        $this->assertNotContains($cmpage2->id, array_keys($cms));
         // No competency linked for page3.
-        $this->assertNotContains($cmpage3->id, array_keys($cms));
+        $this->assertEqualsCanonicalizing([$cmpage1->id], array_keys($cms));
 
         // Empty course module for user1 for the course2.
         $this->setUser($u1);
@@ -786,17 +771,15 @@ class tool_cmcompetency_api_testcase extends externallib_advanced_testcase {
         $coursecontext = context_course::instance($this->course1->id);
         $students = api::get_cm_gradable_users($coursecontext, $cm1);
         $this->assertEquals(2, count($students));
-        $this->assertContains($this->student1->id, array_keys($students));
-        $this->assertContains($this->student2->id, array_keys($students));
+        $this->assertEqualsCanonicalizing([$this->student1->id, $this->student2->id], array_keys($students));
 
         // Checks that everybody see Quiz2.
         $coursecontext = context_course::instance($this->course1->id);
         $students = api::get_cm_gradable_users($coursecontext, $cm2);
         $this->assertEquals(4, count($students));
-        $this->assertContains($this->student1->id, array_keys($students));
-        $this->assertContains($this->student2->id, array_keys($students));
-        $this->assertContains($this->student3->id, array_keys($students));
-        $this->assertContains($this->student4->id, array_keys($students));
+        $studentslist = [$this->student1->id, $this->student2->id, $this->student3->id, $this->student4->id];
+        $this->assertEqualsCanonicalizing($studentslist, array_keys($students));
+
     }
 
     /**
@@ -851,13 +834,11 @@ class tool_cmcompetency_api_testcase extends externallib_advanced_testcase {
         // Check group members of Team 1.
         $students = api::get_cm_gradable_users($coursecontext, $cm1, $group1->id);
         $this->assertEquals(2, count($students));
-        $this->assertContains($this->student1->id, array_keys($students));
-        $this->assertContains($this->student2->id, array_keys($students));
+        $this->assertEqualsCanonicalizing([$this->student1->id, $this->student2->id], array_keys($students));
 
         // Check group members of Team 2.
         $students = api::get_cm_gradable_users($coursecontext, $cm1, $group2->id);
         $this->assertEquals(2, count($students));
-        $this->assertContains($this->student3->id, array_keys($students));
-        $this->assertContains($this->student4->id, array_keys($students));
+        $this->assertEqualsCanonicalizing([$this->student3->id, $this->student4->id], array_keys($students));
     }
 }

@@ -38,15 +38,37 @@ use stdClass;
  */
 class user_competency_cm_exporter extends \core\external\persistent_exporter {
 
+    /**
+     * Returns the specific class the persistent should be an instance of.
+     *
+     * @return string
+     */
     protected static function define_class() {
         return \tool_cmcompetency\user_competency_coursemodule::class;
     }
 
+    /**
+     * Returns a list of objects that are related to this persistent.
+     *
+     * Only objects listed here can be cached in this object.
+     *
+     * The class name can be suffixed:
+     * - with [] to indicate an array of values.
+     * - with ? to indicate that 'null' is allowed.
+     *
+     * @return array of 'propertyname' => array('type' => classname, 'required' => true)
+     */
     protected static function define_related() {
         // We cache the scale so it does not need to be retrieved from the framework every time.
         return array('scale' => 'grade_scale');
     }
 
+    /**
+     * Get the additional values to inject while exporting.
+     *
+     * @param renderer_base $output The renderer.
+     * @return array Keys are the property names, values are their values.
+     */
     protected function get_other_values(renderer_base $output) {
         $result = new stdClass();
 
@@ -78,6 +100,11 @@ class user_competency_cm_exporter extends \core\external\persistent_exporter {
         ];
     }
 
+    /**
+     * Return the list of additional properties used only for display.
+     *
+     * @return array other properties
+     */
     protected static function define_other_properties() {
         return array(
             'gradename' => array(

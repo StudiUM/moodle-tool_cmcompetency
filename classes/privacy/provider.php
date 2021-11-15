@@ -17,8 +17,8 @@
 /**
  * Privacy Subsystem implementation for tool_cmcompetency.
  *
- * @package    report_lpmonitoring
- * @auhtor     Issam Taboubi <issam.taboubi@umontreal.ca>
+ * @package    tool_cmcompetency
+ * @author     Issam Taboubi <issam.taboubi@umontreal.ca>
  * @copyright  2019 Université de Montréal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,10 +27,23 @@ defined('MOODLE_INTERNAL') || die();
 
 use core_privacy\local\metadata\collection;
 
+/**
+ * Cmcompetency tool provider.
+ *
+ * @copyright  2021 Université de Montréal
+ * @author     Issam Taboubi <issam.taboubi@umontreal.ca>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class provider implements
     \core_privacy\local\metadata\provider,
     \core_privacy\local\metadata\null_provider {
 
+    /**
+     * Returns meta data about this system.
+     *
+     * @param   collection $collection The initialised collection to add items to.
+     * @return  collection     A listing of user data stored through this system.
+     */
     public static function get_metadata(collection $collection) : collection {
         $collection->add_database_table('tool_cmcompetency_usercompcm', [
             'userid' => 'privacy:metadata:cmcompetency:userid',

@@ -43,6 +43,17 @@ require_once($CFG->dirroot . '/mod/assign/locallib.php');
  */
 class user_competency_summary_in_coursemodule_exporter extends \core\external\exporter {
 
+    /**
+     * Returns a list of objects that are related to this persistent.
+     *
+     * Only objects listed here can be cached in this object.
+     *
+     * The class name can be suffixed:
+     * - with [] to indicate an array of values.
+     * - with ? to indicate that 'null' is allowed.
+     *
+     * @return array of 'propertyname' => array('type' => classname, 'required' => true)
+     */
     protected static function define_related() {
         // We cache the context so it does not need to be retrieved from the framework every time.
         return array('competency' => '\\core_competency\\competency',
@@ -54,6 +65,11 @@ class user_competency_summary_in_coursemodule_exporter extends \core\external\ex
                      'scale' => '\\grade_scale');
     }
 
+    /**
+     * Return the list of additional properties used only for display.
+     *
+     * @return array other properties
+     */
     protected static function define_other_properties() {
         return array(
             'usercompetencysummary' => array(
@@ -68,6 +84,12 @@ class user_competency_summary_in_coursemodule_exporter extends \core\external\ex
         );
     }
 
+    /**
+     * Get the additional values to inject while exporting.
+     *
+     * @param renderer_base $output The renderer.
+     * @return array Keys are the property names, values are their values.
+     */
     protected function get_other_values(renderer_base $output) {
         $related = $this->related;
         $result = new stdClass();

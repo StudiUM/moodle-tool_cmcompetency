@@ -99,7 +99,7 @@ class tool_cmcompetency_event_testcase extends advanced_testcase {
             \tool_cmcompetency\event\user_competency_viewed_in_coursemodule::create($params)->trigger();
             $this->fail('The \'competencyid\' value must be set.');
         } catch (coding_exception $e) {
-            $this->assertRegExp("/The 'competencyid' value must be set./", $e->getMessage());
+            $this->assertMatchesRegularExpression("/The 'competencyid' value must be set./", $e->getMessage());
         }
 
         $params['other']['competencyid'] = $c->get('id');
@@ -108,7 +108,7 @@ class tool_cmcompetency_event_testcase extends advanced_testcase {
             \tool_cmcompetency\event\user_competency_viewed_in_coursemodule::create($params)->trigger();
             $this->fail('The \'relateduserid\' value must be set.');
         } catch (coding_exception $e) {
-            $this->assertRegExp("/The 'relateduserid' value must be set./", $e->getMessage());
+            $this->assertMatchesRegularExpression("/The 'relateduserid' value must be set./", $e->getMessage());
         }
         $params['relateduserid'] = $user->id;
         // Missing cmid.
@@ -116,7 +116,7 @@ class tool_cmcompetency_event_testcase extends advanced_testcase {
             \tool_cmcompetency\event\user_competency_viewed_in_coursemodule::create($params)->trigger();
             $this->fail('The \'cmid\' value must be set.');
         } catch (coding_exception $e) {
-            $this->assertRegExp("/The 'cmid' value must be set./", $e->getMessage());
+            $this->assertMatchesRegularExpression("/The 'cmid' value must be set./", $e->getMessage());
         }
     }
 
