@@ -28,7 +28,6 @@ namespace tool_cmcompetency\event;
 use core\event\base;
 use tool_cmcompetency\user_competency_coursemodule;
 use context_module;
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * User competency grade rated in course module event class.

@@ -21,13 +21,13 @@
  * @copyright 2019 Université de Montréal
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace tool_cmcompetency;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
-use tool_cmcompetency\external;
 
 /**
  * External course module competency webservice API tests.
@@ -37,7 +37,7 @@ use tool_cmcompetency\external;
  * @copyright 2019 Université de Montréal
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_cmcompetency_external_testcase extends externallib_advanced_testcase {
+class external_test extends \externallib_advanced_testcase {
 
     /** @var stdClass $creator User with enough permissions to create insystem context. */
     protected $creator = null;
@@ -68,7 +68,7 @@ class tool_cmcompetency_external_testcase extends externallib_advanced_testcase 
         $creator = $this->getDataGenerator()->create_user();
         $user = $this->getDataGenerator()->create_user();
 
-        $syscontext = context_system::instance();
+        $syscontext = \context_system::instance();
 
         // Fetching default authenticated user role.
         $userroles = get_archetype_roles('user');

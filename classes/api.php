@@ -569,7 +569,7 @@ class api {
         }
 
         $coursecontext = context_course::instance($course->id);
-        if (!$course->visible and !has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
+        if (!$course->visible && !has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
             if ($throwexception) {
                 throw new require_login_exception('Course is hidden');
             } else {

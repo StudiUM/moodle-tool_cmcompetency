@@ -22,13 +22,15 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace tool_cmcompetency;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
-use tool_cmcompetency\api;
+use \context_course;
 
 /**
  * External course module competency API tests.
@@ -38,7 +40,7 @@ use tool_cmcompetency\api;
  * @copyright 2019 Université de Montréal
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_cmcompetency_api_testcase extends externallib_advanced_testcase {
+class api_test extends \externallib_advanced_testcase {
 
     /** @var stdClass $student1 User for generating plans, student of course1. */
     protected $student1 = null;
@@ -309,7 +311,7 @@ class tool_cmcompetency_api_testcase extends externallib_advanced_testcase {
         $lpg = $dg->get_plugin_generator('core_competency');
 
         $cm = get_coursemodule_from_instance('page', $this->page->id);
-        $sysctx = context_system::instance();
+        $sysctx = \context_system::instance();
         $c1ctx = context_course::instance($this->course1->id);
 
         $teacher1 = $dg->create_user();
@@ -373,7 +375,7 @@ class tool_cmcompetency_api_testcase extends externallib_advanced_testcase {
         try {
             api::list_user_competencies_in_coursemodule($cm->id, $student2->id);
             $this->fail('The user does not belong to this course.');
-        } catch (coding_exception $e) {
+        } catch (\coding_exception $e) {
             $this->assertStringContainsString('The user does not belong to this course.', $e->getMessage());
         }
     }
@@ -597,7 +599,7 @@ class tool_cmcompetency_api_testcase extends externallib_advanced_testcase {
         $lpg->create_course_module_competency(array('competencyid' => $comp1->get('id'), 'cmid' => $cmassign->id));
         // Test for user1.
         $this->setUser($u1);
-        $cms = \tool_cmcompetency\api::get_list_course_modules_with_competencies($c1->id);
+        $cms = api::get_list_course_modules_with_competencies($c1->id);
         // User1 should see only page1 and assign1.
         // Hidden course module.
         // No competency linked for page3.
@@ -605,7 +607,7 @@ class tool_cmcompetency_api_testcase extends externallib_advanced_testcase {
 
         // Test for user2.
         $this->setUser($u2);
-        $cms = \tool_cmcompetency\api::get_list_course_modules_with_competencies($c1->id);
+        $cms = api::get_list_course_modules_with_competencies($c1->id);
         // User2 should see only page1 and assign1.
         // Hidden course module.
         // No competency linked for page3.
@@ -613,7 +615,7 @@ class tool_cmcompetency_api_testcase extends externallib_advanced_testcase {
 
         // Test for user3.
         $this->setUser($u3);
-        $cms = \tool_cmcompetency\api::get_list_course_modules_with_competencies($c1->id);
+        $cms = api::get_list_course_modules_with_competencies($c1->id);
         // User3 should see only page1.
         // User3 does not belong to group.
         // Hidden course module.
@@ -622,7 +624,7 @@ class tool_cmcompetency_api_testcase extends externallib_advanced_testcase {
 
         // Empty course module for user1 for the course2.
         $this->setUser($u1);
-        $cms = \tool_cmcompetency\api::get_list_course_modules_with_competencies($c2->id);
+        $cms = api::get_list_course_modules_with_competencies($c2->id);
         $this->assertEmpty($cms);
     }
 

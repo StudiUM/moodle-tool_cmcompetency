@@ -23,7 +23,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace tool_cmcompetency\privacy;
-defined('MOODLE_INTERNAL') || die();
 
 use core_privacy\local\metadata\collection;
 

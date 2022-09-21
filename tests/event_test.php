@@ -23,12 +23,12 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace tool_cmcompetency;
+
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->dirroot . '/comment/lib.php');
-
-use tool_cmcompetency\api;
-use tool_cmcompetency\user_competency_coursemodule;
+use \context_course;
 
 /**
  * Event tests.
@@ -38,7 +38,7 @@ use tool_cmcompetency\user_competency_coursemodule;
  * @copyright 2019 Université de Montréal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_cmcompetency_event_testcase extends advanced_testcase {
+class event_test extends \advanced_testcase {
 
     /**
      * Test the user competency viewed event in course module.
@@ -98,7 +98,7 @@ class tool_cmcompetency_event_testcase extends advanced_testcase {
         try {
             \tool_cmcompetency\event\user_competency_viewed_in_coursemodule::create($params)->trigger();
             $this->fail('The \'competencyid\' value must be set.');
-        } catch (coding_exception $e) {
+        } catch (\coding_exception $e) {
             $this->assertMatchesRegularExpression("/The 'competencyid' value must be set./", $e->getMessage());
         }
 
@@ -107,7 +107,7 @@ class tool_cmcompetency_event_testcase extends advanced_testcase {
         try {
             \tool_cmcompetency\event\user_competency_viewed_in_coursemodule::create($params)->trigger();
             $this->fail('The \'relateduserid\' value must be set.');
-        } catch (coding_exception $e) {
+        } catch (\coding_exception $e) {
             $this->assertMatchesRegularExpression("/The 'relateduserid' value must be set./", $e->getMessage());
         }
         $params['relateduserid'] = $user->id;
@@ -115,7 +115,7 @@ class tool_cmcompetency_event_testcase extends advanced_testcase {
         try {
             \tool_cmcompetency\event\user_competency_viewed_in_coursemodule::create($params)->trigger();
             $this->fail('The \'cmid\' value must be set.');
-        } catch (coding_exception $e) {
+        } catch (\coding_exception $e) {
             $this->assertMatchesRegularExpression("/The 'cmid' value must be set./", $e->getMessage());
         }
     }

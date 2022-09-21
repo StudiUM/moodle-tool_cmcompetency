@@ -23,7 +23,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace tool_cmcompetency;
-defined('MOODLE_INTERNAL') || die();
 
 use context_module;
 use context_user;
