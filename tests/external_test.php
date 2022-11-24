@@ -32,6 +32,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 /**
  * External course module competency webservice API tests.
  *
+ * @covers \tool_cmcompetency\external
  * @package   tool_cmcompetency
  * @author    Issam Taboubi <issam.taboubi@umontreal.ca>
  * @copyright 2019 Université de Montréal

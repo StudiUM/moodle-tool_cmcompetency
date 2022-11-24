@@ -35,6 +35,7 @@ use \context_course;
 /**
  * External course module competency API tests.
  *
+ * @covers \tool_cmcompetency\api
  * @package   tool_cmcompetency
  * @author    Issam Taboubi <issam.taboubi@umontreal.ca>
  * @copyright 2019 Université de Montréal
