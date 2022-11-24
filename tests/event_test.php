@@ -33,6 +33,7 @@ use \context_course;
 /**
  * Event tests.
  *
+ * @covers \tool_cmcompetency\event
  * @package   tool_cmcompetency
  * @author    Issam Taboubi <issam.taboubi@umontreal.ca>
  * @copyright 2019 Université de Montréal

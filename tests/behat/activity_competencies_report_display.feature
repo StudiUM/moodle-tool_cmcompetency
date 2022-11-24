@@ -8,6 +8,7 @@ Feature: View the competencies report for an activity for student
 
   Scenario: Course module navigation
     Given I am on "Anatomy" course homepage
+    And I select "More" from secondary navigation
     And I follow "Competencies linked in the course activities"
     And I should see "Module 1" in the "//span[@aria-selected='true']" "xpath_element"
     And I should see "Module 1" in the "//h2" "xpath_element"
@@ -19,15 +20,11 @@ Feature: View the competencies report for an activity for student
     Then I should see "Module 2" in the "//span[@aria-selected='true']" "xpath_element"
     And I should see "Module 2" in the "//h2" "xpath_element"
     And I should not see "No competencies have been linked to this course activity."
-    And I am on the "Forum Test" "forum activity" page
-    And I follow "Competencies linked in the course activities"
-    And I should see "Forum Test" in the "//span[@aria-selected='true']" "xpath_element"
-    And I should see "Forum Test" in the "//h2" "xpath_element"
-    And I should see "No competencies have been linked to this course activity."
 
   Scenario: Course module competencies
     # Module 1
-    Given I am on the "Module 1" "assign activity" page
+    Given I am on "Anatomy" course homepage
+    And I select "More" from secondary navigation
     And I follow "Competencies linked in the course activities"
     And I should see "Module 1" in the "//h2" "xpath_element"
     And I should see "not good" in the "//span[contains(@class, 'level') and ancestor-or-self::div/h4/a[contains(., 'Competency A')]]" "xpath_element"

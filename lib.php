@@ -33,21 +33,20 @@
 function tool_cmcompetency_extend_navigation_course($navigation, $course, $context) {
     global $PAGE, $USER;
     if (is_enrolled($context, $USER->id, 'moodle/competency:coursecompetencygradable')) {
+
         $params = ['courseid' => $course->id];
         if ($PAGE->cm && $PAGE->cm->id) {
             $params['id'] = $PAGE->cm->id;
         }
         $path = new moodle_url("/admin/tool/cmcompetency/userreport.php", $params);
         $node = navigation_node::create(get_string('competencycmmenu', 'tool_cmcompetency'),
-                $path, navigation_node::TYPE_CONTAINER, 'cmp-md', 'competencies', new pix_icon('i/competencies', ''));
+                $path, navigation_node::TYPE_COURSE, 'cmp-md', 'cmcompetency', new pix_icon('i/competencies', ''));
         if ($node->check_if_active(URL_MATCH_BASE)) {
             $node->make_active();
         }
-        $coursenode = $PAGE->navigation->find($course->id, navigation_node::TYPE_COURSE);
-        $gradenode = $coursenode->get('grades');
-        if ($gradenode !== false) {
-            $coursenode->add_node($node, 'grades');
-        }
+        $node->set_force_into_more_menu(true);
+        $node->set_show_in_secondary_navigation(true);
+        $navigation->add_node($node);
     }
 }
 
