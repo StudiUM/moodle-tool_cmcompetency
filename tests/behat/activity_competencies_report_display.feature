@@ -11,14 +11,14 @@ Feature: View the competencies report for an activity for student
     And I select "More" from secondary navigation
     And I follow "Competencies linked in the course activities"
     And I should see "Module 1" in the "//span[@aria-selected='true']" "xpath_element"
-    And I should see "Module 1" in the "//h2" "xpath_element"
+    And I should see "Module 1" in the "//h1" "xpath_element"
     And I should not see "No competencies have been linked to this course activity."
     And "//ul[@class='form-autocomplete-suggestions']//li[contains(.,'Module 2')]" "xpath_element" should exist
     And "//ul[@class='form-autocomplete-suggestions']//li[contains(.,'Module 3')]" "xpath_element" should not exist
     When I click on ".form-autocomplete-downarrow" "css_element"
     And I click on "//ul[@class='form-autocomplete-suggestions']//li[contains(.,'Module 2')]" "xpath_element"
     Then I should see "Module 2" in the "//span[@aria-selected='true']" "xpath_element"
-    And I should see "Module 2" in the "//h2" "xpath_element"
+    And I should see "Module 2" in the "//h1" "xpath_element"
     And I should not see "No competencies have been linked to this course activity."
 
   Scenario: Course module competencies
@@ -26,7 +26,7 @@ Feature: View the competencies report for an activity for student
     Given I am on "Anatomy" course homepage
     And I select "More" from secondary navigation
     And I follow "Competencies linked in the course activities"
-    And I should see "Module 1" in the "//h2" "xpath_element"
+    And I should see "Module 1" in the "//h1" "xpath_element"
     And I should see "not good" in the "//span[contains(@class, 'level') and ancestor-or-self::div/h4/a[contains(., 'Competency A')]]" "xpath_element"
     # Module 1 competency stats.
     And I should see "You are proficient in 0 out of 1 competencies in this course activity."
@@ -41,7 +41,7 @@ Feature: View the competencies report for an activity for student
     # Module 2
     And I click on ".form-autocomplete-downarrow" "css_element"
     And I click on "//ul[@class='form-autocomplete-suggestions']//li[contains(.,'Module 2')]" "xpath_element"
-    And I should see "Module 2" in the "//h2" "xpath_element"
+    And I should see "Module 2" in the "//h1" "xpath_element"
     # Module 2 competency stats.
     And I should see "You are proficient in 1 out of 2 competencies in this course activity."
     And I should see "Not rated" in the "//span[contains(@class, 'level') and ancestor-or-self::div/h4/a[contains(., 'Competency A')]]" "xpath_element"
