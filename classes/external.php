@@ -168,7 +168,7 @@ class external extends external_api {
      */
     public static function grade_competency_in_coursemodule($cmid, $userid, $competencyid, $grade, $note = null,
             $applygroup = false) {
-        global $USER, $PAGE, $DB, $CFG;
+        global $USER, $PAGE, $CFG;
         require_once($CFG->libdir."/filelib.php");
 
         $params = self::validate_parameters(self::grade_competency_in_coursemodule_parameters(), array(
@@ -184,7 +184,9 @@ class external extends external_api {
         self::validate_context($context);
         $output = $PAGE->get_renderer('core');
         $data = [];
-        parse_str($params['note'], $data);
+        if($params['note']) {
+            parse_str($params['note'], $data);
+        }
         $editornote = api::show_richtext_editor() && isset($data['contextid']) ? true : false;
         if (isset($data['contextid'])) {
             if ($editornote) {

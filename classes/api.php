@@ -39,7 +39,6 @@ use context_module;
 use context_user;
 use coding_exception;
 use require_login_exception;
-use moodle_exception;
 use required_capability_exception;
 
 require_once($CFG->dirroot . '/mod/assign/locallib.php');

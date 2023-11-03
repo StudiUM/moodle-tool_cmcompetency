@@ -134,7 +134,7 @@ class uc_cm_summary_exporter extends \core\external\exporter {
         $scale = $competency->get_scale();
 
         $result->evidence = array();
-        if (count($this->related['evidence'])) {
+        if (is_array($this->related['evidence']) && count($this->related['evidence'])) {
             foreach ($this->related['evidence'] as $evidence) {
                 $actionuserid = $evidence->get('actionuserid');
                 if (!empty($actionuserid)) {
