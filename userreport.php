@@ -28,7 +28,7 @@ global $USER;
 
 $currentcmid = optional_param('id', null, PARAM_INT);
 $courseid = required_param('courseid', PARAM_INT);
-$course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+$course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
 $context = context_course::instance($course->id);
 $cmwithnocomp = false;
 // Fetch current course module.
@@ -51,7 +51,7 @@ if ($currentcmid > 0) {
     $PAGE->set_cm($cm);
 }
 
-$urlparams = array('id' => $currentcmid, 'courseid' => $courseid);
+$urlparams = ['id' => $currentcmid, 'courseid' => $courseid];
 $url = new moodle_url('/admin/tool/cmcompetency/userreport.php', $urlparams);
 
 $title = get_string('competencycmmenu', 'tool_cmcompetency');
@@ -59,14 +59,14 @@ $title = get_string('competencycmmenu', 'tool_cmcompetency');
 $PAGE->navigation->override_active_url($url);
 $PAGE->set_url($url);
 $PAGE->set_title($title);
-$coursename = format_string($course->fullname, true, array('context' => $context));
+$coursename = format_string($course->fullname, true, ['context' => $context]);
 $PAGE->set_heading($coursename);
 $output = $PAGE->get_renderer('tool_cmcompetency');
 echo $output->header();
 if (is_enrolled($context, $USER->id, 'moodle/competency:coursecompetencygradable')) {
     if ($currentcmid > 0) {
         $image = html_writer::empty_tag('img',
-                array('src' => $modinfo->cms[$currentcmid]->get_icon_url()->out(), 'class' => 'cm-competency-img'));
+                ['src' => $modinfo->cms[$currentcmid]->get_icon_url()->out(), 'class' => 'cm-competency-img']);
         echo $output->heading($image . format_string($cm->name), 2);
         echo $output->heading($title, 3);
         $baseurl = new moodle_url('/admin/tool/cmcompetency/userreport.php');

@@ -97,7 +97,7 @@ class external_test extends \externallib_advanced_testcase {
         $this->creator = $creator;
         $this->user = $user;
 
-        $this->scale1 = $this->getDataGenerator()->create_scale(array("scale" => "value1, value2"));
+        $this->scale1 = $this->getDataGenerator()->create_scale(["scale" => "value1, value2"]);
 
         $this->scaleconfiguration1 = '[{"scaleid":"'.$this->scale1->id.'"},' .
                 '{"name":"value1","id":1,"scaledefault":1,"proficient":0},' .
@@ -113,7 +113,7 @@ class external_test extends \externallib_advanced_testcase {
         $course = $dg->create_course(['fullname' => 'Evil course']);
 
         $pagegenerator = $this->getDataGenerator()->get_plugin_generator('mod_page');
-        $page = $pagegenerator->create_instance(array('course' => $course->id));
+        $page = $pagegenerator->create_instance(['course' => $course->id]);
         $cm = get_coursemodule_from_instance('page', $page->id);
 
         $dg->enrol_user($this->creator->id, $course->id, 'editingteacher');
@@ -123,7 +123,7 @@ class external_test extends \externallib_advanced_testcase {
         $c1 = $lpg->create_competency(['competencyframeworkid' => $f1->get('id')]);
         $lpg->create_course_competency(['courseid' => $course->id, 'competencyid' => $c1->get('id')]);
         // Link competency to course module.
-        $lpg->create_course_module_competency(array('competencyid' => $c1->get('id'), 'cmid' => $cm->id));
+        $lpg->create_course_module_competency(['competencyid' => $c1->get('id'), 'cmid' => $cm->id]);
 
         $evidence = external::grade_competency_in_coursemodule($cm->id, $this->user->id, $c1->get('id'), 1, 'Evil note', false);
 
@@ -146,7 +146,7 @@ class external_test extends \externallib_advanced_testcase {
         $course = $dg->create_course(['fullname' => 'Evil course']);
 
         $pagegenerator = $this->getDataGenerator()->get_plugin_generator('mod_page');
-        $page = $pagegenerator->create_instance(array('course' => $course->id, 'name' => 'Page 1'));
+        $page = $pagegenerator->create_instance(['course' => $course->id, 'name' => 'Page 1']);
         $cm = get_coursemodule_from_instance('page', $page->id);
 
         $dg->enrol_user($this->creator->id, $course->id, 'editingteacher');
@@ -156,7 +156,7 @@ class external_test extends \externallib_advanced_testcase {
         $c1 = $lpg->create_competency(['competencyframeworkid' => $f1->get('id')]);
         $lpg->create_course_competency(['courseid' => $course->id, 'competencyid' => $c1->get('id')]);
         // Link competency to course module.
-        $lpg->create_course_module_competency(array('competencyid' => $c1->get('id'), 'cmid' => $cm->id));
+        $lpg->create_course_module_competency(['competencyid' => $c1->get('id'), 'cmid' => $cm->id]);
 
         external::grade_competency_in_coursemodule($cm->id, $this->user->id, $c1->get('id'), 1, 'Evil note', false);
 

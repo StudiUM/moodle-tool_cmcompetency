@@ -54,11 +54,11 @@ class uc_cm_summary_exporter extends \core\external\exporter {
      */
     protected static function define_related() {
         // We cache the context so it does not need to be retrieved from the framework every time.
-        return array('competency' => '\\core_competency\\competency',
-                     'relatedcompetencies' => '\\core_competency\\competency[]',
-                     'user' => '\\stdClass',
+        return ['competency'                      => '\\core_competency\\competency',
+                     'relatedcompetencies'        => '\\core_competency\\competency[]',
+                     'user'                       => '\\stdClass',
                      'usercompetencycoursemodule' => '\\tool_cmcompetency\\user_competency_coursemodule?',
-                     'evidence' => '\\core_competency\\evidence[]');
+                     'evidence'                   => '\\core_competency\\evidence[]', ];
     }
 
     /**
@@ -67,32 +67,32 @@ class uc_cm_summary_exporter extends \core\external\exporter {
      * @return array other properties
      */
     protected static function define_other_properties() {
-        return array(
-            'showrelatedcompetencies' => array(
-                'type' => PARAM_BOOL
-            ),
-            'cangrade' => array(
-                'type' => PARAM_BOOL
-            ),
-            'competency' => array(
-                'type' => competency_summary_exporter::read_properties_definition()
-            ),
-            'user' => array(
+        return [
+            'showrelatedcompetencies' => [
+                'type' => PARAM_BOOL,
+            ],
+            'cangrade' => [
+                'type' => PARAM_BOOL,
+            ],
+            'competency' => [
+                'type' => competency_summary_exporter::read_properties_definition(),
+            ],
+            'user' => [
                 'type' => user_summary_exporter::read_properties_definition(),
-            ),
-            'usercompetencycm' => array(
-                'type' => user_competency_cm_exporter::read_properties_definition(),
-                'optional' => true
-            ),
-            'evidence' => array(
-                'type' => evidence_exporter::read_properties_definition(),
-                'multiple' => true
-            ),
-            'commentarea' => array(
-                'type' => comment_area_exporter::read_properties_definition(),
-                'optional' => true
-            ),
-        );
+            ],
+            'usercompetencycm' => [
+                'type'     => user_competency_cm_exporter::read_properties_definition(),
+                'optional' => true,
+            ],
+            'evidence' => [
+                'type'     => evidence_exporter::read_properties_definition(),
+                'multiple' => true,
+            ],
+            'commentarea' => [
+                'type'     => comment_area_exporter::read_properties_definition(),
+                'optional' => true,
+            ],
+        ];
     }
 
     /**
@@ -107,13 +107,13 @@ class uc_cm_summary_exporter extends \core\external\exporter {
         $result->showrelatedcompetencies = true;
 
         $competency = $this->related['competency'];
-        $exporter = new competency_summary_exporter(null, array(
-            'competency' => $competency,
-            'context' => $competency->get_context(),
-            'framework' => $competency->get_framework(),
-            'linkedcourses' => array(),
-            'relatedcompetencies' => $this->related['relatedcompetencies']
-        ));
+        $exporter = new competency_summary_exporter(null, [
+            'competency'          => $competency,
+            'context'             => $competency->get_context(),
+            'framework'           => $competency->get_framework(),
+            'linkedcourses'       => [],
+            'relatedcompetencies' => $this->related['relatedcompetencies'],
+        ]);
         $result->competency = $exporter->export($output);
 
         $result->cangrade = false;
@@ -122,18 +122,18 @@ class uc_cm_summary_exporter extends \core\external\exporter {
             $exporter = new user_summary_exporter($this->related['user']);
             $result->user = $exporter->export($output);
         }
-        $related = array('scale' => $competency->get_scale());
+        $related = ['scale' => $competency->get_scale()];
 
         if ($this->related['usercompetencycoursemodule']) {
             $exporter = new user_competency_cm_exporter($this->related['usercompetencycoursemodule'], $related);
             $result->usercompetencycm = $exporter->export($output);
         }
 
-        $allevidence = array();
-        $usercache = array();
+        $allevidence = [];
+        $usercache   = [];
         $scale = $competency->get_scale();
 
-        $result->evidence = array();
+        $result->evidence = [];
         if (is_array($this->related['evidence']) && count($this->related['evidence'])) {
             foreach ($this->related['evidence'] as $evidence) {
                 $actionuserid = $evidence->get('actionuserid');
@@ -141,7 +141,7 @@ class uc_cm_summary_exporter extends \core\external\exporter {
                     $usercache[$evidence->get('actionuserid')] = true;
                 }
             }
-            $users = array();
+            $users = [];
             if (!empty($usercache)) {
                 list($sql, $params) = $DB->get_in_or_equal(array_keys($usercache));
                 $users = $DB->get_records_select('user', 'id ' . $sql, $params);
@@ -153,12 +153,12 @@ class uc_cm_summary_exporter extends \core\external\exporter {
 
             foreach ($this->related['evidence'] as $evidence) {
                 $actionuserid = $evidence->get('actionuserid');
-                $related = array(
-                    'scale' => $scale,
-                    'usercompetency' => null,
+                $related = [
+                    'scale'              => $scale,
+                    'usercompetency'     => null,
                     'usercompetencyplan' => null,
-                    'context' => $evidence->get_context()
-                );
+                    'context'            => $evidence->get_context(),
+                ];
                 $related['actionuser'] = !empty($actionuserid) ? $usercache[$actionuserid] : null;
                 $exporter = new evidence_exporter($evidence, $related);
                 $allevidence[] = $exporter->export($output);

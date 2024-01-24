@@ -59,7 +59,7 @@ class user_competency_cm_exporter extends \core\external\persistent_exporter {
      */
     protected static function define_related() {
         // We cache the scale so it does not need to be retrieved from the framework every time.
-        return array('scale' => 'grade_scale');
+        return ['scale' => 'grade_scale'];
     }
 
     /**
@@ -105,13 +105,13 @@ class user_competency_cm_exporter extends \core\external\persistent_exporter {
      * @return array other properties
      */
     protected static function define_other_properties() {
-        return array(
-            'gradename' => array(
-                'type' => PARAM_TEXT
-            ),
-            'proficiencyname' => array(
-                'type' => PARAM_RAW
-            )
-        );
+        return [
+            'gradename' => [
+                'type' => PARAM_TEXT,
+            ],
+            'proficiencyname' => [
+                'type' => PARAM_RAW,
+            ],
+        ];
     }
 }

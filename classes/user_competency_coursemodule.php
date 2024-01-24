@@ -48,27 +48,27 @@ class user_competency_coursemodule extends persistent {
      * @return array
      */
     protected static function define_properties() {
-        return array(
-            'userid' => array(
+        return [
+            'userid' => [
                 'type' => PARAM_INT,
-            ),
-            'cmid' => array(
-                'type' => PARAM_INT
-            ),
-            'competencyid' => array(
+            ],
+            'cmid' => [
                 'type' => PARAM_INT,
-            ),
-            'proficiency' => array(
-                'type' => PARAM_BOOL,
+            ],
+            'competencyid' => [
+                'type' => PARAM_INT,
+            ],
+            'proficiency' => [
+                'type'    => PARAM_BOOL,
                 'default' => null,
-                'null' => NULL_ALLOWED,
-            ),
-            'grade' => array(
-                'type' => PARAM_INT,
+                'null'    => NULL_ALLOWED,
+            ],
+            'grade' => [
+                'type'    => PARAM_INT,
                 'default' => null,
-                'null' => NULL_ALLOWED,
-            ),
-        );
+                'null'    => NULL_ALLOWED,
+            ],
+        ];
     }
 
     /**
@@ -119,7 +119,7 @@ class user_competency_coursemodule extends persistent {
     protected function validate_userid($value) {
         global $DB;
 
-        if (!$DB->record_exists('user', array('id' => $value))) {
+        if (!$DB->record_exists('user', ['id' => $value])) {
             return new lang_string('invaliduserid', 'error');
         }
 
@@ -208,7 +208,7 @@ class user_competency_coursemodule extends persistent {
     public static function get_multiple($userid, $cmid, array $competenciesorids = null) {
         global $DB;
 
-        $params = array();
+        $params = [];
         $params['userid'] = $userid;
         $params['cmid'] = $cmid;
         $sql = '1 = 1';
@@ -218,7 +218,7 @@ class user_competency_coursemodule extends persistent {
             if (is_number($test)) {
                 $ids = $competenciesorids;
             } else {
-                $ids = array();
+                $ids = [];
                 foreach ($competenciesorids as $comp) {
                     $ids[] = $comp->get('id');
                 }
@@ -250,7 +250,7 @@ class user_competency_coursemodule extends persistent {
                   JOIN {' . \core_competency\competency::TABLE . '} comp
                     ON usercmcomp.competencyid = comp.id
                  WHERE usercmcomp.cmid = ? AND usercmcomp.userid = ? AND usercmcomp.proficiency = ?';
-        $params = array($cmid, $userid, true);
+        $params = [$cmid, $userid, true];
 
         $results = $DB->count_records_sql($sql, $params);
 
@@ -269,7 +269,7 @@ class user_competency_coursemodule extends persistent {
         global $DB;
 
         $fields = competency::get_sql_fields('c', 'c_');
-        $params = array('cmid' => $cmid);
+        $params = ['cmid' => $cmid];
         $sql = 'SELECT ' . $fields . '
                   FROM (SELECT cc.competencyid, SUM(COALESCE(ucc.proficiency, 0)) AS timesproficient
                           FROM {' . \core_competency\course_module_competency::TABLE . '} cc
@@ -286,7 +286,7 @@ class user_competency_coursemodule extends persistent {
         raise_memory_limit(MEMORY_EXTRA);
         $results = $DB->get_records_sql($sql, $params, $skip, $limit);
 
-        $comps = array();
+        $comps = [];
         foreach ($results as $r) {
             $c = competency::extract_record($r, 'c_');
             $comps[] = new \core_competency\competency(0, $c);

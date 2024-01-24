@@ -52,14 +52,15 @@ require_once($CFG->dirroot . '/mod/assign/locallib.php');
  */
 class api {
 
-    /** @var boolean showrichtexteditor  **/
-    static protected $showrichtexteditor = true;
-
     /**
      * Check if course module competency grading is enabled.
      */
     public static function show_richtext_editor() {
-        return self::$showrichtexteditor;
+        $properties = \core_competency\evidence::properties_definition();
+        if (isset($properties['note']) && $properties['note']['type'] === PARAM_RAW) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -72,12 +73,12 @@ class api {
         core_api::require_enabled();
 
         $courses = \core_competency\course_competency::list_courses($competencyid);
-        $result = array();
+        $result = [];
 
         // Now check permissions on each course.
         foreach ($courses as $course) {
             $context = context_course::instance($course->id);
-            $capabilities = array('moodle/competency:coursecompetencyview', 'moodle/competency:coursecompetencymanage');
+            $capabilities = ['moodle/competency:coursecompetencyview', 'moodle/competency:coursecompetencymanage'];
             if (!has_any_capability($capabilities, $context)) {
                 continue;
             }
@@ -106,7 +107,7 @@ class api {
         self::validate_course_module($cm);
         $context = context_module::instance($cm->id);
 
-        $capabilities = array('moodle/competency:coursecompetencyview', 'moodle/competency:coursecompetencymanage');
+        $capabilities = ['moodle/competency:coursecompetencyview', 'moodle/competency:coursecompetencymanage'];
         if (!has_any_capability($capabilities, $context)) {
              throw new required_capability_exception($context, 'moodle/competency:coursecompetencyview', 'nopermissions', '');
         }
@@ -132,7 +133,7 @@ class api {
         self::validate_course_module($cm);
         $context = context_module::instance($cm->id);
 
-        $capabilities = array('moodle/competency:coursecompetencyview', 'moodle/competency:coursecompetencymanage');
+        $capabilities = ['moodle/competency:coursecompetencyview', 'moodle/competency:coursecompetencymanage'];
         if (!has_any_capability($capabilities, $context)) {
              throw new required_capability_exception($context, 'moodle/competency:coursecompetencyview', 'nopermissions', '');
         }
@@ -155,7 +156,7 @@ class api {
         $context = context_module::instance($cmid);
         $cm = get_coursemodule_from_id('', $cmid, 0, true, MUST_EXIST);
 
-        $capabilities = array('moodle/competency:coursecompetencyview', 'moodle/competency:coursecompetencymanage');
+        $capabilities = ['moodle/competency:coursecompetencyview', 'moodle/competency:coursecompetencymanage'];
         if (!has_any_capability($capabilities, $context)) {
             throw new required_capability_exception($context, 'moodle/competency:coursecompetencyview', 'nopermissions', '');
         } else if (!user_competency::can_read_user_in_course($userid, $cm->course)) {
@@ -165,7 +166,7 @@ class api {
         // This will throw an exception if the competency does not belong to the course module.
         $competency = course_module_competency::get_competency($cmid, $competencyid);
 
-        $params = array('cmid' => $cmid, 'userid' => $userid, 'competencyid' => $competencyid);
+        $params = ['cmid' => $cmid, 'userid' => $userid, 'competencyid' => $competencyid];
         $exists = user_competency_coursemodule::get_record($params);
         // Create missing.
         if ($exists) {
@@ -197,7 +198,7 @@ class api {
             throw new coding_exception('The user does not belong to this course.');
         }
 
-        $capabilities = array('moodle/competency:coursecompetencyview', 'moodle/competency:coursecompetencymanage');
+        $capabilities = ['moodle/competency:coursecompetencyview', 'moodle/competency:coursecompetencymanage'];
         if (!has_any_capability($capabilities, $context)) {
             throw new required_capability_exception($context, 'moodle/competency:coursecompetencyview', 'nopermissions', '');
         } else if (!user_competency::can_read_user_in_course($userid, $cm->course)) {
@@ -209,7 +210,7 @@ class api {
 
         $existing = user_competency_coursemodule::get_multiple($userid, $cmid, $competencylist);
         // Create missing.
-        $orderedusercompetencycm = array();
+        $orderedusercompetencycm = [];
 
         foreach ($competencylist as $coursecompetency) {
             $found = false;
@@ -253,9 +254,9 @@ class api {
             throw new required_capability_exception($context, 'moodle/competency:usercompetencyview', 'nopermissions', '');
         }
 
-        $usercompetency = user_competency::get_record(array('userid' => $userid, 'competencyid' => $competencyid));
+        $usercompetency = user_competency::get_record(['userid' => $userid, 'competencyid' => $competencyid]);
         if (!$usercompetency) {
-            return array();
+            return [];
         }
 
         $context = context_module::instance($cmid);
@@ -339,7 +340,7 @@ class api {
 
         $competency = course_module_competency::get_competency($cm->id, $competencyid);
         $competencycontext = $competency->get_context();
-        if (!has_any_capability(array('moodle/competency:competencyview', 'moodle/competency:competencymanage'),
+        if (!has_any_capability(['moodle/competency:competencyview', 'moodle/competency:competencymanage'],
                 $competencycontext)) {
             throw new required_capability_exception($competencycontext, 'moodle/competency:competencyview', 'nopermissions', '');
         }
@@ -365,7 +366,7 @@ class api {
                                 $USER->id,
                                 $note);
         if ($result) {
-            $all = user_competency_coursemodule::get_multiple($userid, $cm->id, array($competency->get('id')));
+            $all = user_competency_coursemodule::get_multiple($userid, $cm->id, [$competency->get('id')]);
             $uc = reset($all);
             // Use when create the event.
             $event = cmcompetency_rated_event::create_from_user_competency_coursemodule($uc);
@@ -388,7 +389,7 @@ class api {
         core_api::require_enabled();
         $cmcontext = context_module::instance($cmid);
 
-        if (!has_any_capability(array('moodle/competency:competencyview', 'moodle/competency:competencymanage'), $cmcontext)) {
+        if (!has_any_capability(['moodle/competency:competencyview', 'moodle/competency:competencymanage'], $cmcontext)) {
             throw new required_capability_exception($cmcontext, 'moodle/competency:competencyview', 'nopermissions', '');
         }
 
@@ -467,7 +468,7 @@ class api {
         $usercompetencycm = null;
 
         // Fetch or create the user competency.
-        $usercompetency = user_competency::get_record(array('userid' => $userid, 'competencyid' => $competencyid));
+        $usercompetency = user_competency::get_record(['userid' => $userid, 'competencyid' => $competencyid]);
         if (!$usercompetency) {
             $usercompetency = user_competency::create_relation($userid, $competencyid);
             $usercompetency->create();
@@ -484,11 +485,12 @@ class api {
 
         // Add user_competency_coursemodule.
         if ($context->contextlevel == CONTEXT_MODULE) {
-            $filterparams = array(
-                'userid' => $userid,
+            $filterparams = [
+                'userid'       => $userid,
                 'competencyid' => $competencyid,
-                'cmid' => $cmid
-            );
+                'cmid'         => $cmid,
+            ];
+
             // Fetch or create user competency course module.
             $usercompetencycm = user_competency_coursemodule::get_record($filterparams);
             if (!$usercompetencycm) {
@@ -613,7 +615,7 @@ class api {
     public static function get_list_course_modules_with_competencies($courseid, $selectedcmid = null, $defaultcmid = null) {
         global $DB;
 
-        $params = array('course' => $courseid);
+        $params = ['course' => $courseid];
         $sql = 'SELECT DISTINCT(cm.id)
                   FROM {course_modules} cm
             RIGHT JOIN {' . \core_competency\course_module_competency::TABLE . '} cmcomp
@@ -680,7 +682,7 @@ class api {
         // Get the users enrolled in the courses and who can see this course module.
         $enrolled = get_enrolled_users($context, 'moodle/competency:coursecompetencygradable', $currentgroup, 'u.*', null, 0, 0,
                 $showonlyactiveenrol);
-        $gradable = array();
+        $gradable = [];
         foreach ($enrolled as $user) {
             if (self::is_cm_available_for_user($cm, $user)) {
                 $gradable[$user->id] = $user;

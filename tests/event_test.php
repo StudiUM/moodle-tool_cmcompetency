@@ -28,7 +28,7 @@ namespace tool_cmcompetency;
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->dirroot . '/comment/lib.php');
-use \context_course;
+use context_course;
 
 /**
  * Event tests.
@@ -55,15 +55,15 @@ class event_test extends \advanced_testcase {
         $fr = $lpg->create_framework();
 
         $pagegenerator = $this->getDataGenerator()->get_plugin_generator('mod_page');
-        $page = $pagegenerator->create_instance(array('course' => $course->id));
+        $page = $pagegenerator->create_instance(['course' => $course->id]);
         $cm = get_coursemodule_from_instance('page', $page->id);
 
-        $c = $lpg->create_competency(array('competencyframeworkid' => $fr->get('id')));
-        $pc = $lpg->create_course_competency(array('courseid' => $course->id, 'competencyid' => $c->get('id')));
+        $c  = $lpg->create_competency(['competencyframeworkid' => $fr->get('id')]);
+        $pc = $lpg->create_course_competency(['courseid' => $course->id, 'competencyid' => $c->get('id')]);
         // Link competency to course module.
-        $lpg->create_course_module_competency(array('competencyid' => $c->get('id'), 'cmid' => $cm->id));
+        $lpg->create_course_module_competency(['competencyid' => $c->get('id'), 'cmid' => $cm->id]);
 
-        $params = array('userid' => $user->id, 'competencyid' => $c->get('id'), 'cmid' => $cm->id);
+        $params = ['userid' => $user->id, 'competencyid' => $c->get('id'), 'cmid' => $cm->id];
         $record = (object) $params;
         $uccm = new user_competency_coursemodule(0, $record);
         $uccm->create();
@@ -89,11 +89,11 @@ class event_test extends \advanced_testcase {
         $this->assertDebuggingNotCalled();
 
         // Test validation.
-        $params = array (
-            'objectid' => $uccm->get('id'),
+        $params = [
+            'objectid'  => $uccm->get('id'),
             'contextid' => context_course::instance($course->id)->id,
-            'other' => null
-        );
+            'other'     => null,
+        ];
 
         // Missing competencyid.
         try {
@@ -134,15 +134,15 @@ class event_test extends \advanced_testcase {
         $fr = $lpg->create_framework();
 
         $pagegenerator = $this->getDataGenerator()->get_plugin_generator('mod_page');
-        $page = $pagegenerator->create_instance(array('course' => $course->id));
+        $page = $pagegenerator->create_instance(['course' => $course->id]);
         $cm = get_coursemodule_from_instance('page', $page->id);
 
-        $c = $lpg->create_competency(array('competencyframeworkid' => $fr->get('id')));
-        $pc = $lpg->create_course_competency(array('courseid' => $course->id, 'competencyid' => $c->get('id')));
+        $c  = $lpg->create_competency(['competencyframeworkid' => $fr->get('id')]);
+        $pc = $lpg->create_course_competency(['courseid' => $course->id, 'competencyid' => $c->get('id')]);
         // Link competency to course module.
-        $lpg->create_course_module_competency(array('competencyid' => $c->get('id'), 'cmid' => $cm->id));
+        $lpg->create_course_module_competency(['competencyid' => $c->get('id'), 'cmid' => $cm->id]);
 
-        $params = array('userid' => $user->id, 'competencyid' => $c->get('id'), 'cmid' => $cm->id);
+        $params = ['userid' => $user->id, 'competencyid' => $c->get('id'), 'cmid' => $cm->id];
         $record = (object) $params;
         $uccm = new user_competency_coursemodule(0, $record);
         $uccm->create();
@@ -181,44 +181,44 @@ class event_test extends \advanced_testcase {
         $this->setAdminUser();
         $dg = $this->getDataGenerator();
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
-        $scale = $dg->create_scale(array('scale' => 'A,B,C,D'));
+        $scale = $dg->create_scale(['scale' => 'A,B,C,D']);
         $course = $dg->create_course();
         $user = $dg->create_user();
         $user2 = $dg->create_user();
         $user3 = $dg->create_user();
         $pagegenerator = $this->getDataGenerator()->get_plugin_generator('mod_page');
-        $page = $pagegenerator->create_instance(array('course' => $course->id));
+        $page = $pagegenerator->create_instance(['course' => $course->id]);
         $studentarch = get_archetype_roles('student');
         $studentrole = array_shift($studentarch);
-        $scaleconfig = array(array('scaleid' => $scale->id));
-        $scaleconfig[] = array('name' => 'A', 'id' => 1, 'scaledefault' => 0, 'proficient' => 0);
-        $scaleconfig[] = array('name' => 'B', 'id' => 2, 'scaledefault' => 1, 'proficient' => 0);
-        $scaleconfig[] = array('name' => 'C', 'id' => 3, 'scaledefault' => 0, 'proficient' => 1);
-        $scaleconfig[] = array('name' => 'D', 'id' => 4, 'scaledefault' => 0, 'proficient' => 1);
-        $fr = $lpg->create_framework();
-        $c = $lpg->create_competency(array(
+        $scaleconfig   = [['scaleid' => $scale->id]];
+        $scaleconfig[] = ['name' => 'A', 'id' => 1, 'scaledefault' => 0, 'proficient' => 0];
+        $scaleconfig[] = ['name' => 'B', 'id' => 2, 'scaledefault' => 1, 'proficient' => 0];
+        $scaleconfig[] = ['name' => 'C', 'id' => 3, 'scaledefault' => 0, 'proficient' => 1];
+        $scaleconfig[] = ['name' => 'D', 'id' => 4, 'scaledefault' => 0, 'proficient' => 1];
+        $fr            = $lpg->create_framework();
+        $c             = $lpg->create_competency([
             'competencyframeworkid' => $fr->get('id'),
-            'scaleid' => $scale->id,
-            'scaleconfiguration' => $scaleconfig
-        ));
+            'scaleid'               => $scale->id,
+            'scaleconfiguration'    => $scaleconfig,
+        ]);
         // Enrol the users as students in course.
         $dg->enrol_user($user->id, $course->id, $studentrole->id);
         $dg->enrol_user($user2->id, $course->id, $studentrole->id);
-        $lpg->create_course_competency(array(
-            'courseid' => $course->id,
-            'competencyid' => $c->get('id')));
+        $lpg->create_course_competency([
+            'courseid'     => $course->id,
+            'competencyid' => $c->get('id'), ]);
 
         // Create groups of students.
-        $groupingdata = array();
+        $groupingdata = [];
         $groupingdata['courseid'] = $course->id;
         $groupingdata['name'] = 'Group assignment grouping';
 
         $grouping = self::getDataGenerator()->create_grouping($groupingdata);
 
-        $group1data = array();
+        $group1data = [];
         $group1data['courseid'] = $course->id;
         $group1data['name'] = 'Team 1';
-        $group2data = array();
+        $group2data = [];
         $group2data['courseid'] = $course->id;
         $group2data['name'] = 'Team 2';
 
@@ -234,7 +234,7 @@ class event_test extends \advanced_testcase {
 
         // Create assignment.
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
-        $params = array();
+        $params = [];
         $params['course'] = $course->id;
         $params['teamsubmission'] = 1;
         $params['teamsubmissiongroupingid'] = $grouping->id;
@@ -242,13 +242,13 @@ class event_test extends \advanced_testcase {
         $cm = get_coursemodule_from_instance('assign', $instance->id);
 
         // Link competency to course module.
-        $lpg->create_course_module_competency(array('competencyid' => $c->get('id'), 'cmid' => $cm->id));
-        $uc = $lpg->create_user_competency(array(
-            'userid' => $user->id,
-            'competencyid' => $c->get('id')));
-        $uc2 = $lpg->create_user_competency(array(
-            'userid' => $user2->id,
-            'competencyid' => $c->get('id')));
+        $lpg->create_course_module_competency(['competencyid' => $c->get('id'), 'cmid' => $cm->id]);
+        $uc = $lpg->create_user_competency([
+            'userid'       => $user->id,
+            'competencyid' => $c->get('id'), ]);
+        $uc2 = $lpg->create_user_competency([
+            'userid'       => $user2->id,
+            'competencyid' => $c->get('id'), ]);
 
         // Test for individual evaluations.
         // Trigger and capture the event.

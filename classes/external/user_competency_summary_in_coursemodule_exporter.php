@@ -56,13 +56,13 @@ class user_competency_summary_in_coursemodule_exporter extends \core\external\ex
      */
     protected static function define_related() {
         // We cache the context so it does not need to be retrieved from the framework every time.
-        return array('competency' => '\\core_competency\\competency',
-                     'relatedcompetencies' => '\\core_competency\\competency[]',
-                     'user' => '\\stdClass',
-                     'course' => '\\stdClass',
+        return ['competency'                      => '\\core_competency\\competency',
+                     'relatedcompetencies'        => '\\core_competency\\competency[]',
+                     'user'                       => '\\stdClass',
+                     'course'                     => '\\stdClass',
                      'usercompetencycoursemodule' => '\\tool_cmcompetency\\user_competency_coursemodule?',
-                     'evidence' => '\\core_competency\\evidence[]',
-                     'scale' => '\\grade_scale');
+                     'evidence'                   => '\\core_competency\\evidence[]',
+                     'scale'                      => '\\grade_scale', ];
     }
 
     /**
@@ -71,17 +71,17 @@ class user_competency_summary_in_coursemodule_exporter extends \core\external\ex
      * @return array other properties
      */
     protected static function define_other_properties() {
-        return array(
-            'usercompetencysummary' => array(
-                'type' => uc_cm_summary_exporter::read_properties_definition()
-            ),
-            'coursemodule' => array(
-                'type' => course_module_summary_exporter::read_properties_definition()
-            ),
-            'showapplygroup' => array(
-                'type' => PARAM_BOOL
-            )
-        );
+        return [
+            'usercompetencysummary' => [
+                'type' => uc_cm_summary_exporter::read_properties_definition(),
+            ],
+            'coursemodule' => [
+                'type' => course_module_summary_exporter::read_properties_definition(),
+            ],
+            'showapplygroup' => [
+                'type' => PARAM_BOOL,
+            ],
+        ];
     }
 
     /**
@@ -102,7 +102,7 @@ class user_competency_summary_in_coursemodule_exporter extends \core\external\ex
         $cmid = $this->related['usercompetencycoursemodule']->get('cmid');
         $modinfo = get_fast_modinfo($this->related['course']);
         $cm = $modinfo->get_cm($cmid);
-        $cmexporter = new course_module_summary_exporter(null, array('cm' => $cm));
+        $cmexporter = new course_module_summary_exporter(null, ['cm' => $cm]);
         $result->coursemodule = $cmexporter->export($output);
 
         $result->showapplygroup = false;

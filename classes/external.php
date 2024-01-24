@@ -23,19 +23,16 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace tool_cmcompetency;
-defined('MOODLE_INTERNAL') || die();
 
-require_once("$CFG->libdir/externallib.php");
-
-use external_api;
+use core_external\external_api;
 use core_competency\external\evidence_exporter;
 use core_competency\api as core_api;
 use tool_cmcompetency\api;
 use tool_cmcompetency\output\user_competency_summary_in_coursemodule;
 use tool_cmcompetency\external\user_competency_summary_in_coursemodule_exporter;
 use tool_cmcompetency\form\grade_cm;
-use external_function_parameters;
-use external_value;
+use core_external\external_function_parameters;
+use core_external\external_value;
 use context_module;
 use context_user;
 
@@ -69,11 +66,11 @@ class external extends external_api {
             'The course module id',
             VALUE_REQUIRED
         );
-        $params = array(
+        $params = [
             'competencyid' => $competencyid,
-            'userid' => $userid,
-            'cmid' => $cmid
-        );
+            'userid'       => $userid,
+            'cmid'         => $cmid,
+        ];
         return new external_function_parameters($params);
     }
 
@@ -86,11 +83,11 @@ class external extends external_api {
      * @return boolean
      */
     public static function user_competency_viewed_in_coursemodule($competencyid, $userid, $cmid) {
-        $params = self::validate_parameters(self::user_competency_viewed_in_coursemodule_parameters(), array(
+        $params = self::validate_parameters(self::user_competency_viewed_in_coursemodule_parameters(), [
             'competencyid' => $competencyid,
-            'userid' => $userid,
-            'cmid' => $cmid
-        ));
+            'userid'       => $userid,
+            'cmid'         => $cmid,
+        ]);
         $ucc = api::get_user_competency_in_coursemodule($params['cmid'], $params['userid'], $params['competencyid']);
         $result = api::user_competency_viewed_in_coursemodule($ucc);
 
@@ -144,14 +141,14 @@ class external extends external_api {
             false
         );
 
-        $params = array(
-            'cmid' => $cmid,
-            'userid' => $userid,
+        $params = [
+            'cmid'         => $cmid,
+            'userid'       => $userid,
             'competencyid' => $competencyid,
-            'grade' => $grade,
-            'note' => $note,
-            'applygroup' => $applygroup
-        );
+            'grade'        => $grade,
+            'note'         => $note,
+            'applygroup'   => $applygroup,
+        ];
         return new external_function_parameters($params);
     }
 
@@ -171,20 +168,20 @@ class external extends external_api {
         global $USER, $PAGE, $CFG;
         require_once($CFG->libdir."/filelib.php");
 
-        $params = self::validate_parameters(self::grade_competency_in_coursemodule_parameters(), array(
-            'cmid' => $cmid,
-            'userid' => $userid,
+        $params = [
+            'cmid'         => $cmid,
+            'userid'       => $userid,
             'competencyid' => $competencyid,
-            'grade' => $grade,
-            'note' => $note,
-            'applygroup' => $applygroup
-        ));
+            'grade'        => $grade,
+            'note'         => $note,
+            'applygroup'   => $applygroup,
+        ];
 
         $context = context_module::instance($params['cmid']);
         self::validate_context($context);
         $output = $PAGE->get_renderer('core');
         $data = [];
-        if($params['note']) {
+        if ($params['note']) {
             parse_str($params['note'], $data);
         }
         $editornote = api::show_richtext_editor() && isset($data['contextid']) ? true : false;
@@ -228,6 +225,7 @@ class external extends external_api {
                     );
                     if ($note) {
                         $e->set('note', $note);
+                        var_dump($e);die;
                         $e->update();
                     }
                 }
@@ -236,13 +234,14 @@ class external extends external_api {
 
         $competency = core_api::read_competency($params['competencyid']);
         $scale = $competency->get_scale();
-        $exporter = new evidence_exporter($evidence, array(
-            'actionuser' => $USER,
-            'scale' => $scale,
-            'usercompetency' => null,
+        $exporter = new evidence_exporter($evidence, [
+            'actionuser'         => $USER,
+            'scale'              => $scale,
+            'usercompetency'     => null,
             'usercompetencyplan' => null,
-            'context' => $evidence->get_context(),
-        ));
+            'context'            => $evidence->get_context(),
+        ]);
+
         return $exporter->export($output);
     }
 
@@ -277,11 +276,11 @@ class external extends external_api {
             VALUE_REQUIRED
         );
 
-        $params = array(
-            'userid' => $userid,
+        $params = [
+            'userid'       => $userid,
             'competencyid' => $competencyid,
-            'cmid' => $cmid,
-        );
+            'cmid'         => $cmid,
+        ];
         return new external_function_parameters($params);
     }
 
@@ -295,11 +294,11 @@ class external extends external_api {
      */
     public static function data_for_user_competency_summary_in_coursemodule($userid, $competencyid, $cmid) {
         global $PAGE;
-        $params = self::validate_parameters(self::data_for_user_competency_summary_in_coursemodule_parameters(), array(
-            'userid' => $userid,
+        $params = self::validate_parameters(self::data_for_user_competency_summary_in_coursemodule_parameters(), [
+            'userid'       => $userid,
             'competencyid' => $competencyid,
-            'cmid' => $cmid
-        ));
+            'cmid'         => $cmid,
+        ]);
         $context = context_user::instance($params['userid']);
         self::validate_context($context);
         $output = $PAGE->get_renderer('tool_lp');

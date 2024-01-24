@@ -44,7 +44,7 @@ class coursemodule_competency_statistics {
     public $proficientcompetencycount = 0;
 
     /** @var $leastproficientcompetencies The competencies in this course module that were proficient the least times */
-    public $leastproficientcompetencies = array();
+    public $leastproficientcompetencies = [];
 
     /**
      * Return the custom definition of the properties of this model.

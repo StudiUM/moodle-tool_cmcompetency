@@ -55,7 +55,7 @@ class grade_cm extends moodleform  implements renderable {
             'maxfiles' => EDITOR_UNLIMITED_FILES,
             'maxbytes' => $CFG->maxbytes,
             'noclean' => true,
-            'autosave' => false
+            'autosave' => false,
         ];
     }
 
@@ -91,7 +91,7 @@ class grade_cm extends moodleform  implements renderable {
         }
         $mform->addElement('html', \html_writer::start_div('', ['data-region' => 'comment']));
         if (api::show_richtext_editor()) {
-            $mform->addElement('editor', 'comment', get_string('ratecomment', 'tool_lp'), array('rows' => 4), $editoroptions,
+            $mform->addElement('editor', 'comment', get_string('ratecomment', 'tool_lp'), ['rows' => 4], $editoroptions,
                 '', ['id' => 'comment_' . uniqid()]);
             $mform->setType('comment', PARAM_CLEANHTML);
         } else {

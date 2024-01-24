@@ -55,14 +55,14 @@ class user_competency_viewed_in_coursemodule extends base {
             throw new \coding_exception('The user competency course ID must be set.');
         }
         $cmid = $usercompetencycm->get('cmid');
-        $params = array(
-            'objectid' => $usercompetencycm->get('id'),
+        $params = [
+            'objectid'      => $usercompetencycm->get('id'),
             'relateduserid' => $usercompetencycm->get('userid'),
-            'other' => array(
+            'other'         => [
                 'competencyid' => $usercompetencycm->get('competencyid'),
-                'cmid' => $cmid
-            )
-        );
+                'cmid'         => $cmid,
+            ],
+        ];
         $cmrecord = get_coursemodule_from_id(null, $cmid);
         $context = \context_course::instance($cmrecord->course);
         $params['contextid'] = $context->id;

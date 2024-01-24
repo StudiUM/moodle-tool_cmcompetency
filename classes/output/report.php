@@ -77,7 +77,7 @@ class report implements renderable, templatable {
 
         $user = core_user::get_user($this->userid);
 
-        $data->usercompetencies = array();
+        $data->usercompetencies = [];
         $cmcompetencies = core_competency_api::list_course_module_competencies($this->cmid);
         $usercompetencycoursesmodules = tool_cmcompetency_api::list_user_competencies_in_coursemodule($this->cmid, $user->id);
         $cmcompetencystatistics = new coursemodule_competency_statistics($this->cmid);
@@ -99,22 +99,22 @@ class report implements renderable, templatable {
             $framework = $helper->get_framework_from_competency($competency);
             $scale = $helper->get_scale_from_competency($competency);
 
-            $exporter = new user_competency_cm_exporter($usercompetencycm, array('scale' => $scale));
+            $exporter = new user_competency_cm_exporter($usercompetencycm, ['scale' => $scale]);
             $record = $exporter->export($output);
             $onerow->usercompetencycoursemodule = $record;
-            $exporter = new competency_summary_exporter(null, array(
-                'competency' => $competency,
-                'framework' => $framework,
-                'context' => $framework->get_context(),
-                'relatedcompetencies' => array(),
-                'linkedcourses' => array()
-            ));
+            $exporter = new competency_summary_exporter(null, [
+                'competency'          => $competency,
+                'framework'           => $framework,
+                'context'             => $framework->get_context(),
+                'relatedcompetencies' => [],
+                'linkedcourses'       => [],
+            ]);
             $onerow->competency = $exporter->export($output);
 
             $evidences = tool_cmcompetency_api::list_evidence_in_coursemodule($this->userid, $this->cmid, $competency->get('id'));
-            $allevidence = array();
-            $usercache = array();
-            $onerow->evidence = array();
+            $allevidence      = [];
+            $usercache        = [];
+            $onerow->evidence = [];
             if (count($evidences)) {
                 foreach ($evidences as $evidence) {
                     $actionuserid = $evidence->get('actionuserid');
@@ -122,7 +122,7 @@ class report implements renderable, templatable {
                         $usercache[$evidence->get('actionuserid')] = true;
                     }
                 }
-                $users = array();
+                $users = [];
                 if (!empty($usercache)) {
                     list($sql, $params) = $DB->get_in_or_equal(array_keys($usercache));
                     $users = $DB->get_records_select('user', 'id ' . $sql, $params);
@@ -134,12 +134,12 @@ class report implements renderable, templatable {
 
                 foreach ($evidences as $evidence) {
                     $actionuserid = $evidence->get('actionuserid');
-                    $related = array(
-                        'scale' => $scale,
-                        'usercompetency' => null,
+                    $related = [
+                        'scale'              => $scale,
+                        'usercompetency'     => null,
                         'usercompetencyplan' => null,
-                        'context' => $evidence->get_context()
-                    );
+                        'context'            => $evidence->get_context(),
+                    ];
                     $related['actionuser'] = !empty($actionuserid) ? $usercache[$actionuserid] : null;
                     $exporter = new evidence_exporter($evidence, $related);
                     $allevidence[] = $exporter->export($output);
@@ -149,7 +149,7 @@ class report implements renderable, templatable {
             array_push($data->usercompetencies, $onerow);
         }
         $data->hascompetencies = (empty($data->usercompetencies)) ? false : true;
-        $related = array('context' => \context_module::instance($this->cmid));
+        $related = ['context' => \context_module::instance($this->cmid)];
         $exporter = new course_competency_statistics_exporter($cmcompetencystatistics, $related);
         $data->statistics = $exporter->export($output);
         return $data;

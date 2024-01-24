@@ -78,20 +78,20 @@ class user_competency_summary_in_coursemodule implements renderable, templatable
         }
 
         $relatedcompetencies = core_api::list_related_competencies($competency->get('id'));
-        $user = $DB->get_record('user', array('id' => $this->userid));
+        $user = $DB->get_record('user', ['id' => $this->userid]);
         $evidence = api::list_evidence_in_coursemodule($this->userid, $this->cmid, $this->competencyid);
         $cm = get_coursemodule_from_id('', $this->cmid, 0, true, MUST_EXIST);
-        $course = $DB->get_record('course', array('id' => $cm->course));
+        $course = $DB->get_record('course', ['id' => $cm->course]);
 
-        $params = array(
-            'competency' => $competency,
+        $params = [
+            'competency'                 => $competency,
             'usercompetencycoursemodule' => $usercompetencycm,
-            'evidence' => $evidence,
-            'user' => $user,
-            'course' => $course,
-            'scale' => $competency->get_scale(),
-            'relatedcompetencies' => $relatedcompetencies
-        );
+            'evidence'                   => $evidence,
+            'user'                       => $user,
+            'course'                     => $course,
+            'scale'                      => $competency->get_scale(),
+            'relatedcompetencies'        => $relatedcompetencies,
+        ];
         $exporter = new user_competency_summary_in_coursemodule_exporter(null, $params);
         $data = $exporter->export($output);
 

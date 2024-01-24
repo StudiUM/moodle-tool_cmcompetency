@@ -56,15 +56,15 @@ class user_competency_rated_in_coursemodule extends base {
             throw new \coding_exception('The user competency course module ID must be set.');
         }
 
-        $params = array(
-            'objectid' => $usercompetencycm->get('id'),
+        $params = [
+            'objectid'      => $usercompetencycm->get('id'),
             'relateduserid' => $usercompetencycm->get('userid'),
-            'other' => array(
+            'other'         => [
                 'competencyid' => $usercompetencycm->get('competencyid'),
-                'grade' => $usercompetencycm->get('grade'),
-                'cmid' => $usercompetencycm->get('cmid')
-            )
-        );
+                'grade'        => $usercompetencycm->get('grade'),
+                'cmid'         => $usercompetencycm->get('cmid'),
+            ],
+        ];
         $cmrecord = get_coursemodule_from_id(null, $usercompetencycm->get('cmid'));
         $context = \context_course::instance($cmrecord->course);
         $params['contextid'] = $context->id;
