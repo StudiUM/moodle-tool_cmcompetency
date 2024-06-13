@@ -225,7 +225,6 @@ class external extends external_api {
                     );
                     if ($note) {
                         $e->set('note', $note);
-                        var_dump($e);die;
                         $e->update();
                     }
                 }
