@@ -770,14 +770,18 @@ class api_test extends \externallib_advanced_testcase {
         $lpg->create_course_module_competency(['competencyid' => $comp1->get('id'), 'cmid' => $cm1->id]);
         $lpg->create_course_module_competency(['competencyid' => $comp1->get('id'), 'cmid' => $cm2->id]);
 
-        // Checks that only Team 1 sees Quiz1.
         $coursecontext = context_course::instance($this->course1->id);
+
+        // Checks that gradable list contains only student1 if we pass this id as parameter.
+        $students = api::get_cm_gradable_users($coursecontext, $cm1, 0, false, $this->student1->id);
+        $this->assertEquals(1, count($students));
+
+        // Checks that only Team 1 sees Quiz1.
         $students = api::get_cm_gradable_users($coursecontext, $cm1);
         $this->assertEquals(2, count($students));
         $this->assertEqualsCanonicalizing([$this->student1->id, $this->student2->id], array_keys($students));
 
         // Checks that everybody see Quiz2.
-        $coursecontext = context_course::instance($this->course1->id);
         $students = api::get_cm_gradable_users($coursecontext, $cm2);
         $this->assertEquals(4, count($students));
         $studentslist = [$this->student1->id, $this->student2->id, $this->student3->id, $this->student4->id];

@@ -34,6 +34,7 @@ use tool_cmcompetency\event\user_competency_rated_in_coursemodule as cmcompetenc
 use tool_cmcompetency\event\user_competency_viewed_in_coursemodule as cmcompetency_viewed_event;
 use stdClass;
 use cm_info;
+use core_user;
 use context_course;
 use context_module;
 use context_user;
@@ -669,9 +670,10 @@ class api {
      * @param stdClass $cm
      * @param int $currentgroup
      * @param boolean $onlyone True if we return only one result, false if we return all of them.
+     * @param int $userid
      * @return array
      */
-    public static function get_cm_gradable_users($context, $cm, $currentgroup = 0, $onlyone = false) {
+    public static function get_cm_gradable_users($context, $cm, $currentgroup = 0, $onlyone = false, $userid = 0) {
         global $CFG;
 
          // Fetch showactive.
@@ -683,6 +685,23 @@ class api {
         $enrolled = get_enrolled_users($context, 'moodle/competency:coursecompetencygradable', $currentgroup, 'u.*', null, 0, 0,
                 $showonlyactiveenrol);
         $gradable = [];
+        // Avoid to get all users if we are looking for only one.
+        if ($userid) {
+            $userids = array_map(function($user) {
+                return $user->id;
+            }, $enrolled);
+            if (in_array($userid, $userids)) {
+                $user = core_user::get_user($userid);
+                if (self::is_cm_available_for_user($cm, $user)) {
+                    $gradable[$user->id] = $user;
+                    return $gradable;
+                } else {
+                    $onlyone = true;
+                }
+            } else {
+                $onlyone = true;
+            }
+        }
         foreach ($enrolled as $user) {
             if (self::is_cm_available_for_user($cm, $user)) {
                 $gradable[$user->id] = $user;
