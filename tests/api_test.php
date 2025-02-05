@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * External course module competency API tests.
  *
@@ -21,7 +22,6 @@
  * @copyright 2019 Université de Montréal
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 namespace tool_cmcompetency;
 
 defined('MOODLE_INTERNAL') || die();
@@ -41,7 +41,7 @@ use context_course;
  * @copyright 2019 Université de Montréal
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class api_test extends \externallib_advanced_testcase {
+final class api_test extends \externallib_advanced_testcase {
 
     /** @var stdClass $student1 User for generating plans, student of course1. */
     protected $student1 = null;
@@ -65,6 +65,7 @@ class api_test extends \externallib_advanced_testcase {
     protected $framework = null;
 
     protected function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
         $lpg = $dg->get_plugin_generator('core_competency');
@@ -98,7 +99,7 @@ class api_test extends \externallib_advanced_testcase {
     /**
      * Test course module statistics api functions.
      */
-    public function test_coursemodule_statistics() {
+    public function test_coursemodule_statistics(): void {
         $dg = $this->getDataGenerator();
         $lpg = $dg->get_plugin_generator('core_competency');
 
@@ -197,7 +198,7 @@ class api_test extends \externallib_advanced_testcase {
     /**
      * Get a user competency in a course module.
      */
-    public function test_get_user_competency_in_coursemodule() {
+    public function test_get_user_competency_in_coursemodule(): void {
         $dg = $this->getDataGenerator();
         $lpg = $dg->get_plugin_generator('core_competency');
 
@@ -240,7 +241,7 @@ class api_test extends \externallib_advanced_testcase {
     /**
      * Test list courses modules using competency.
      */
-    public function test_list_coursesmodules_using_competency() {
+    public function test_list_coursesmodules_using_competency(): void {
         $dg = $this->getDataGenerator();
         $lpg = $dg->get_plugin_generator('core_competency');
         $this->setAdminUser();
@@ -307,7 +308,7 @@ class api_test extends \externallib_advanced_testcase {
     /**
      * Test list_user_competencies_in_coursemodule.
      */
-    public function test_list_user_competencies_in_coursemodule() {
+    public function test_list_user_competencies_in_coursemodule(): void {
         $dg = $this->getDataGenerator();
         $lpg = $dg->get_plugin_generator('core_competency');
 
@@ -384,7 +385,7 @@ class api_test extends \externallib_advanced_testcase {
     /**
      * Test grade_competency_in_coursemodule.
      */
-    public function test_grade_competency_in_coursemodule() {
+    public function test_grade_competency_in_coursemodule(): void {
         $dg = $this->getDataGenerator();
         $lpg = $dg->get_plugin_generator('core_competency');
 
@@ -531,7 +532,7 @@ class api_test extends \externallib_advanced_testcase {
     /*
      * Test list_user_competencies_in_coursemodule.
      */
-    public function test_get_list_course_modules_with_competencies() {
+    public function test_get_list_course_modules_with_competencies(): void {
         global $CFG;
         $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
@@ -632,7 +633,7 @@ class api_test extends \externallib_advanced_testcase {
     /**
      * Test is_cm_available_for_user.
      */
-    public function test_is_cm_available_for_user() {
+    public function test_is_cm_available_for_user(): void {
         global $CFG;
 
         $dg = $this->getDataGenerator();
@@ -713,7 +714,7 @@ class api_test extends \externallib_advanced_testcase {
     /**
      * Test get_cm_gradable_users when the activity has a group restriction.
      */
-    public function test_get_cm_gradable_users_grouprestriction() {
+    public function test_get_cm_gradable_users_grouprestriction(): void {
         global $CFG;
 
         $dg = $this->getDataGenerator();
@@ -792,7 +793,7 @@ class api_test extends \externallib_advanced_testcase {
     /**
      * Test get_cm_gradable_users for different groups.
      */
-    public function test_get_cm_gradable_users_groups() {
+    public function test_get_cm_gradable_users_groups(): void {
         global $CFG;
 
         $dg = $this->getDataGenerator();

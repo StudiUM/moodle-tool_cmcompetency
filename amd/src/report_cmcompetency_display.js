@@ -16,7 +16,7 @@
 /**
  * Module to collapse/expand competency detail.
  *
- * @package    tool_cmcompetency
+ * @module     tool_cmcompetency/report_cmcompetency_display
  * @copyright  2019 Université de Montréal
  * @author     Issam Taboubi <issam.taboubi@umontreal.ca>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -27,7 +27,7 @@ define(['jquery', 'core/notification', 'core/str'], function($, notification, st
     /**
      * ReportCmCompetencyDisplay
      *
-     * @param {String} colExpAllSelector The selector of region containing collapse/expand all link.
+     * @param {String} colExpAllRegionSelector The selector of region containing collapse/expand all link.
      * @param {String} listRegionSelector The selector of region containing list of collapse/expand links.
      */
     var ReportCmCompetencyDisplay = function(colExpAllRegionSelector, listRegionSelector) {

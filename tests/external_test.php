@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * External course module competency webservice API tests.
  *
@@ -38,7 +39,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @copyright 2019 Université de Montréal
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class external_test extends \externallib_advanced_testcase {
+final class external_test extends \externallib_advanced_testcase {
 
     /** @var stdClass $creator User with enough permissions to create insystem context. */
     protected $creator = null;
@@ -62,7 +63,7 @@ class external_test extends \externallib_advanced_testcase {
      * Setup function.
      */
     protected function setUp(): void {
-
+        parent::setUp();
         $this->resetAfterTest(true);
 
         // Create some users.
@@ -105,7 +106,7 @@ class external_test extends \externallib_advanced_testcase {
         accesslib_clear_all_caches_for_unit_testing();
     }
 
-    public function test_grade_competency_in_coursemodule() {
+    public function test_grade_competency_in_coursemodule(): void {
         $this->setUser($this->creator);
         $dg = $this->getDataGenerator();
         $lpg = $dg->get_plugin_generator('core_competency');
@@ -138,7 +139,7 @@ class external_test extends \externallib_advanced_testcase {
         external::grade_competency_in_coursemodule($cm->id, $this->user->id, $c1->get('id'), 1);
     }
 
-    public function test_data_for_user_competency_summary_in_coursemodule() {
+    public function test_data_for_user_competency_summary_in_coursemodule(): void {
         $this->setUser($this->creator);
         $dg = $this->getDataGenerator();
         $lpg = $dg->get_plugin_generator('core_competency');

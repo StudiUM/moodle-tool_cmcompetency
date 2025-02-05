@@ -98,10 +98,9 @@ class user_competency_rated_in_coursemodule extends base {
     /**
      * Get URL related to the action
      *
-     * @return \moodle_url
+     * @return \moodle_url|null
      */
     public function get_url() {
-        // TODO.
         // Implement this when creating pages related to cmcompetency.
         return null;
     }

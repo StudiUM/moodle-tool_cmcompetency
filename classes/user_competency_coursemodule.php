@@ -205,7 +205,7 @@ class user_competency_coursemodule extends persistent {
      * @param  array  $competenciesorids Limit search to those competencies, or competency IDs.
      * @return \tool_cmcompetency\user_competency_coursemodule[]
      */
-    public static function get_multiple($userid, $cmid, array $competenciesorids = null) {
+    public static function get_multiple($userid, $cmid, array $competenciesorids = []) {
         global $DB;
 
         $params = [];

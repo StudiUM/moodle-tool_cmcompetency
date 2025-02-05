@@ -16,7 +16,7 @@
 /**
  * Module to navigate between course modules.
  *
- * @package    tool_cmcompetency
+ * @module     tool_cmcompetency/coursemodule_navigation
  * @copyright  2019 Université de Montréal
  * @author     Issam Taboubi <issam.taboubi@umontreal.ca>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
