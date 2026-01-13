@@ -43,7 +43,6 @@ use tool_cmcompetency\user_competency_coursemodule;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class user_competency_viewed_in_coursemodule extends base {
-
     /**
      * Convenience method to instantiate the event in course module.
      *
@@ -144,5 +143,4 @@ class user_competency_viewed_in_coursemodule extends base {
             throw new \coding_exception('The \'cmid\' value must be set.');
         }
     }
-
 }

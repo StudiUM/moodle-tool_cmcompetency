@@ -38,8 +38,14 @@ function tool_cmcompetency_extend_navigation_course($navigation, $course, $conte
             $params['id'] = $PAGE->cm->id;
         }
         $path = new moodle_url("/admin/tool/cmcompetency/userreport.php", $params);
-        $node = navigation_node::create(get_string('competencycmmenu', 'tool_cmcompetency'),
-                $path, navigation_node::TYPE_COURSE, 'cmp-md', null, new pix_icon('i/competencies', ''));
+        $node = navigation_node::create(
+            get_string('competencycmmenu', 'tool_cmcompetency'),
+            $path,
+            navigation_node::TYPE_COURSE,
+            'cmp-md',
+            null,
+            new pix_icon('i/competencies', '')
+        );
         if ($node->check_if_active(URL_MATCH_BASE)) {
             $node->make_active();
         }
@@ -58,7 +64,7 @@ function tool_cmcompetency_extend_navigation_course($navigation, $course, $conte
 function tool_cmcompetency_output_fragment_grade_cm($args) {
     global $CFG, $DB;
 
-    require_once($CFG->libdir.'/formslib.php');
+    require_once($CFG->libdir . '/formslib.php');
     require_once($CFG->dirroot . '/admin/tool/cmcompetency/classes/form/grade_cm.php');
     $args = (object) $args;
     $contextcm = context::instance_by_id($args->contextid);
@@ -70,14 +76,14 @@ function tool_cmcompetency_output_fragment_grade_cm($args) {
             'ratingoptions' => $args->ratingOptions,
             'showapplygroup' => $args->showapplygroup];
     $mform = new \tool_cmcompetency\form\grade_cm(
-            null,
-            $formoptions,
-            'post',
-            '',
-            ['id' => 'competency_grading_form'],
-            true,
-            []
-        );
+        null,
+        $formoptions,
+        'post',
+        '',
+        ['id' => 'competency_grading_form'],
+        true,
+        []
+    );
 
     return $mform->render();
 }

@@ -42,7 +42,6 @@ require_once($CFG->dirroot . '/mod/assign/locallib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class user_competency_summary_in_coursemodule_exporter extends \core\external\exporter {
-
     /**
      * Returns a list of objects that are related to this persistent.
      *
@@ -96,8 +95,10 @@ class user_competency_summary_in_coursemodule_exporter extends \core\external\ex
 
         $exporter = new uc_cm_summary_exporter(null, $related);
         $result->usercompetencysummary = $exporter->export($output);
-        $result->usercompetencysummary->cangrade = user_competency::can_grade_user_in_course($this->related['user']->id,
-            $this->related['course']->id);
+        $result->usercompetencysummary->cangrade = user_competency::can_grade_user_in_course(
+            $this->related['user']->id,
+            $this->related['course']->id
+        );
 
         $cmid = $this->related['usercompetencycoursemodule']->get('cmid');
         $modinfo = get_fast_modinfo($this->related['course']);

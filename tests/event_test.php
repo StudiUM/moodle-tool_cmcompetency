@@ -33,14 +33,13 @@ use context_course;
 /**
  * Event tests.
  *
- * @covers \tool_cmcompetency\event
  * @package   tool_cmcompetency
  * @author    Issam Taboubi <issam.taboubi@umontreal.ca>
  * @copyright 2019 Université de Montréal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_cmcompetency\event::class)]
 final class event_test extends \advanced_testcase {
-
     /**
      * Test the user competency viewed event in course module.
      *

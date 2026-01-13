@@ -65,8 +65,10 @@ $output = $PAGE->get_renderer('tool_cmcompetency');
 echo $output->header();
 if (is_enrolled($context, $USER->id, 'moodle/competency:coursecompetencygradable')) {
     if ($currentcmid > 0) {
-        $image = html_writer::empty_tag('img',
-                ['src' => $modinfo->cms[$currentcmid]->get_icon_url()->out(), 'class' => 'cm-competency-img']);
+        $image = html_writer::empty_tag(
+            'img',
+            ['src' => $modinfo->cms[$currentcmid]->get_icon_url()->out(), 'class' => 'cm-competency-img']
+        );
         echo $output->heading($image . format_string($cm->name), 2);
         echo $output->heading($title, 3);
         $baseurl = new moodle_url('/admin/tool/cmcompetency/userreport.php');
@@ -75,8 +77,10 @@ if (is_enrolled($context, $USER->id, 'moodle/competency:coursecompetencygradable
         echo $output->render($nav);
         if ($cmwithnocomp) {
             echo $output->container('', 'clearfix');
-            echo $OUTPUT->notification(get_string('nocompetenciesincm', 'tool_cmcompetency'),
-                    \core\output\notification::NOTIFY_INFO);
+            echo $OUTPUT->notification(
+                get_string('nocompetenciesincm', 'tool_cmcompetency'),
+                \core\output\notification::NOTIFY_INFO
+            );
         } else {
             $report = new \tool_cmcompetency\output\report($currentcmid);
             echo $output->render($report);
@@ -84,14 +88,18 @@ if (is_enrolled($context, $USER->id, 'moodle/competency:coursecompetencygradable
     } else {
         echo $output->heading($title, 3);
         echo $output->container('', 'clearfix');
-        echo $OUTPUT->notification(get_string('nocompetenciesincms', 'tool_cmcompetency'),
-                \core\output\notification::NOTIFY_INFO);
+        echo $OUTPUT->notification(
+            get_string('nocompetenciesincms', 'tool_cmcompetency'),
+            \core\output\notification::NOTIFY_INFO
+        );
     }
 } else {
     echo $output->heading($title, 3);
     echo $output->container('', 'clearfix margin-notification');
-    echo $OUTPUT->notification(get_string('cannotaccessreportpage', 'tool_cmcompetency'),
-                \core\output\notification::NOTIFY_ERROR);
+    echo $OUTPUT->notification(
+        get_string('cannotaccessreportpage', 'tool_cmcompetency'),
+        \core\output\notification::NOTIFY_ERROR
+    );
 }
 
 echo $OUTPUT->footer();

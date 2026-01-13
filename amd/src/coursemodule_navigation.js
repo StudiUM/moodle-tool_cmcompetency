@@ -34,7 +34,7 @@ define(['jquery'], function($) {
      */
     var CourseModuleNavigation = function(cmSelector, baseUrl, cmId, courseId) {
         this._baseUrl = baseUrl;
-        this._cmid    = cmId;
+        this._cmid = cmId;
         this._courseId = courseId;
 
         $(cmSelector).on('change', this._cmChanged.bind(this));

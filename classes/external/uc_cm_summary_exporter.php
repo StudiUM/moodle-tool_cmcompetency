@@ -40,7 +40,6 @@ use core_competency\user_competency;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class uc_cm_summary_exporter extends \core\external\exporter {
-
     /**
      * Returns a list of objects that are related to this persistent.
      *
@@ -143,7 +142,7 @@ class uc_cm_summary_exporter extends \core\external\exporter {
             }
             $users = [];
             if (!empty($usercache)) {
-                list($sql, $params) = $DB->get_in_or_equal(array_keys($usercache));
+                [$sql, $params] = $DB->get_in_or_equal(array_keys($usercache));
                 $users = $DB->get_records_select('user', 'id ' . $sql, $params);
             }
 
