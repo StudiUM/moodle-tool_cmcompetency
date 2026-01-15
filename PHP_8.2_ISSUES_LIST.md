@@ -120,7 +120,7 @@ After a comprehensive analysis of the moodle-tool_cmcompetency codebase, **NO IS
 
 ## Files Analyzed
 
-### Core Classes (10 files)
+### Core Classes (9 files)
 1. `classes/api.php` - ✅
 2. `classes/user_competency_coursemodule.php` - ✅
 3. `classes/coursemodule_competency_statistics.php` - ✅
@@ -130,23 +130,23 @@ After a comprehensive analysis of the moodle-tool_cmcompetency codebase, **NO IS
 7. `classes/external/uc_cm_summary_exporter.php` - ✅
 8. `classes/privacy/provider.php` - ✅
 9. `classes/form/grade_cm.php` - ✅
-10. `classes/coursemodule_competency_statistics.php` - ✅
 
 ### Output Classes (4 files)
-11. `classes/output/user_competency_summary_in_coursemodule.php` - ✅
-12. `classes/output/report.php` - ✅
-13. `classes/output/coursemodule_navigation.php` - ✅
-14. `classes/output/renderer.php` - ✅
+10. `classes/output/user_competency_summary_in_coursemodule.php` - ✅
+11. `classes/output/report.php` - ✅
+12. `classes/output/coursemodule_navigation.php` - ✅
+13. `classes/output/renderer.php` - ✅
 
 ### Event Classes (2 files)
-15. `classes/event/user_competency_rated_in_coursemodule.php` - ✅
-16. `classes/event/user_competency_viewed_in_coursemodule.php` - ✅
+14. `classes/event/user_competency_rated_in_coursemodule.php` - ✅
+15. `classes/event/user_competency_viewed_in_coursemodule.php` - ✅
 
-### Other Files (4 files)
-17. `lib.php` - ✅
-18. `userreport.php` - ✅
-19. `db/services.php` - ✅
-20. `version.php` - ✅
+### Other Files (5 files)
+16. `lib.php` - ✅
+17. `userreport.php` - ✅
+18. `db/services.php` - ✅
+19. `version.php` - ✅
+20. `lang/en/tool_cmcompetency.php` - ✅
 
 ### Test Files (5 files)
 21. `tests/api_test.php` - ✅
