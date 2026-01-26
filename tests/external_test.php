@@ -100,8 +100,9 @@ final class external_test extends \externallib_advanced_testcase {
         $this->scale1 = $this->getDataGenerator()->create_scale(["scale" => "value1, value2"]);
 
         $this->scaleconfiguration1 = '[{"scaleid":"' . $this->scale1->id . '"},' .
-            '{"name":"value1","id":1,"scaledefault":1,"proficient":0},' .
-            accesslib_clear_all_caches_for_unit_testing();
+            '{"name":"value1","id":1,"scaledefault":1,"proficient":0}]';
+
+        accesslib_clear_all_caches_for_unit_testing();
     }
 
     public function test_grade_competency_in_coursemodule(): void {
