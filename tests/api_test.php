@@ -528,7 +528,7 @@ final class api_test extends \externallib_advanced_testcase {
         $this->assertEquals(null, $uc->get('grade'));
     }
 
-    /*
+    /**
      * Test list_user_competencies_in_coursemodule.
      */
     public function test_get_list_course_modules_with_competencies(): void {

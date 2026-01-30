@@ -38,11 +38,11 @@ use context_course;
  * @copyright 2019 Université de Montréal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(\tool_cmcompetency\event::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_cmcompetency\event\user_competency_viewed_in_coursemodule::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_cmcompetency\event\user_competency_rated_in_coursemodule::class)]
 final class event_test extends \advanced_testcase {
     /**
      * Test the user competency viewed event in course module.
-     *
      */
     public function test_user_competency_viewed_in_coursemodule(): void {
         $this->resetAfterTest(true);
@@ -173,7 +173,6 @@ final class event_test extends \advanced_testcase {
 
     /**
      * Test the user competency grade rated in course module event.
-     *
      */
     public function test_user_competency_rated_in_coursemodule(): void {
         $this->resetAfterTest(true);
