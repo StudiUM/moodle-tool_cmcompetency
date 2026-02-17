@@ -30,7 +30,7 @@ use moodleform;
 use renderable;
 use MoodleQuickForm;
 use tool_cmcompetency\api;
-require_once($CFG->libdir.'/formslib.php');
+require_once($CFG->libdir . '/formslib.php');
 
 /**
  * Grader.
@@ -39,8 +39,7 @@ require_once($CFG->libdir.'/formslib.php');
  * @copyright  2019 Université de Montréal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class grade_cm extends moodleform  implements renderable {
-
+class grade_cm extends moodleform implements renderable {
     /**
      * Build the editor options using the given context.
      *
@@ -91,21 +90,35 @@ class grade_cm extends moodleform  implements renderable {
         }
         $mform->addElement('html', \html_writer::start_div('', ['data-region' => 'comment']));
         if (api::show_richtext_editor()) {
-            $mform->addElement('editor', 'comment', get_string('ratecomment', 'tool_lp'), ['rows' => 4], $editoroptions,
-                '', ['id' => 'comment_' . uniqid()]);
+            $mform->addElement(
+                'editor',
+                'comment',
+                get_string('ratecomment', 'tool_lp'),
+                ['rows' => 4],
+                $editoroptions,
+                '',
+                ['id' => 'comment_' . uniqid()]
+            );
             $mform->setType('comment', PARAM_CLEANHTML);
         } else {
-            $mform->addElement('textarea', 'comment', get_string('ratecomment', 'tool_lp'),
-                ['id' => 'comment_' . uniqid(), 'cols' => 64, 'rows' => 3]);
+            $mform->addElement(
+                'textarea',
+                'comment',
+                get_string('ratecomment', 'tool_lp'),
+                ['id' => 'comment_' . uniqid(), 'cols' => 64, 'rows' => 3]
+            );
         }
         $mform->addElement('html', \html_writer::end_div());
 
         $buttonarray = [];
 
-        $buttonarray[] = $mform->createElement('submit', '', get_string('rate', 'tool_lp'),
-                ['data-action' => 'rate']);
-        $buttonarray[] = $mform->createElement('cancel', '', get_string('cancel'),
-                ['data-action' => 'cancel']);
+        $buttonarray[] = $mform->createElement(
+            'submit',
+            '',
+            get_string('rate', 'tool_lp'),
+            ['data-action' => 'rate']
+        );
+        $buttonarray[] = $mform->createElement('cancel', '', get_string('cancel'), ['data-action' => 'cancel']);
 
         $mform->addElement('html', \html_writer::start_div('', ['data-region' => 'footer']));
         $mform->addGroup($buttonarray, 'buttonar', '', ' ', false);

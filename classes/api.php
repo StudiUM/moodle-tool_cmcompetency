@@ -52,7 +52,6 @@ require_once($CFG->dirroot . '/mod/assign/locallib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class api {
-
     /**
      * Check if course module competency grading is enabled.
      */
@@ -244,8 +243,15 @@ class api {
      * @param int $limit Number of records to return.
      * @return \core_competency\evidence[]
      */
-    public static function list_evidence_in_coursemodule($userid = 0, $cmid = 0, $competencyid = 0, $sort = 'timecreated',
-                                                   $order = 'DESC', $skip = 0, $limit = 0) {
+    public static function list_evidence_in_coursemodule(
+        $userid = 0,
+        $cmid = 0,
+        $competencyid = 0,
+        $sort = 'timecreated',
+        $order = 'DESC',
+        $skip = 0,
+        $limit = 0
+    ) {
         core_api::require_enabled();
 
         $cm = get_coursemodule_from_id('', $cmid, 0, true, MUST_EXIST);
@@ -341,8 +347,9 @@ class api {
 
         $competency = course_module_competency::get_competency($cm->id, $competencyid);
         $competencycontext = $competency->get_context();
-        if (!has_any_capability(['moodle/competency:competencyview', 'moodle/competency:competencymanage'],
-                $competencycontext)) {
+        if (
+            !has_any_capability(['moodle/competency:competencyview', 'moodle/competency:competencymanage'], $competencycontext)
+        ) {
             throw new required_capability_exception($competencycontext, 'moodle/competency:competencyview', 'nopermissions', '');
         }
 
@@ -354,18 +361,20 @@ class api {
         $action = \core_competency\evidence::ACTION_OVERRIDE;
         $desckey = 'evidence_manualoverrideincoursemodule';
 
-        $result = self::add_evidence($userid,
-                                $competency,
-                                $cm->id,
-                                $action,
-                                $desckey,
-                                'tool_cmcompetency',
-                                $contextcm->get_context_name(),
-                                false,
-                                null,
-                                $grade,
-                                $USER->id,
-                                $note);
+        $result = self::add_evidence(
+            $userid,
+            $competency,
+            $cm->id,
+            $action,
+            $desckey,
+            'tool_cmcompetency',
+            $contextcm->get_context_name(),
+            false,
+            null,
+            $grade,
+            $USER->id,
+            $note
+        );
         if ($result) {
             $all = user_competency_coursemodule::get_multiple($userid, $cm->id, [$competency->get('id')]);
             $uc = reset($all);
@@ -448,9 +457,20 @@ class api {
      * @param string $note A note to attach to the evidence.
      * @return evidence
      */
-    public static function add_evidence($userid, $competencyorid, $cmid, $action, $descidentifier, $desccomponent,
-                                        $desca = null, $recommend = false, $url = null, $grade = null, $actionuserid = null,
-                                        $note = null) {
+    public static function add_evidence(
+        $userid,
+        $competencyorid,
+        $cmid,
+        $action,
+        $descidentifier,
+        $desccomponent,
+        $desca = null,
+        $recommend = false,
+        $url = null,
+        $grade = null,
+        $actionuserid = null,
+        $note = null
+    ) {
         core_api::require_enabled();
 
         // Some clearly important variable assignments right there.
@@ -597,8 +617,12 @@ class api {
         $cm = get_coursemodule_from_id('', $ucc->get('cmid'), 0, true, MUST_EXIST);
 
         if (!$ucc || !user_competency::can_read_user_in_course($ucc->get('userid'), $cm->course)) {
-            throw new required_capability_exception($ucc->get_context(), 'moodle/competency:usercompetencyview',
-                'nopermissions', '');
+            throw new required_capability_exception(
+                $ucc->get_context(),
+                'moodle/competency:usercompetencyview',
+                'nopermissions',
+                ''
+            );
         }
 
         cmcompetency_viewed_event::create_from_user_competency_viewed_in_coursemodule($ucc)->trigger();
@@ -682,12 +706,20 @@ class api {
         $showonlyactiveenrol = $showonlyactiveenrol || !has_capability('moodle/course:viewsuspendedusers', $context);
 
         // Get the users enrolled in the courses and who can see this course module.
-        $enrolled = get_enrolled_users($context, 'moodle/competency:coursecompetencygradable', $currentgroup, 'u.*', null, 0, 0,
-                $showonlyactiveenrol);
+        $enrolled = get_enrolled_users(
+            $context,
+            'moodle/competency:coursecompetencygradable',
+            $currentgroup,
+            'u.*',
+            null,
+            0,
+            0,
+            $showonlyactiveenrol
+        );
         $gradable = [];
         // Avoid to get all users if we are looking for only one.
         if ($userid) {
-            $userids = array_map(function($user) {
+            $userids = array_map(function ($user) {
                 return $user->id;
             }, $enrolled);
             if (in_array($userid, $userids)) {

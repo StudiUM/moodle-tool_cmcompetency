@@ -40,7 +40,6 @@ use stdClass;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class coursemodule_navigation implements renderable, templatable {
-
     /** @var stdClass $course */
     protected $course;
 
@@ -79,8 +78,11 @@ class coursemodule_navigation implements renderable, templatable {
         $data->baseurl = $this->baseurl;
         $data->cmid = $this->cm->id;
         $data->courseid = $this->course->id;
-        $cmids = \tool_cmcompetency\api::get_list_course_modules_with_competencies($this->course->id,
-                $this->cm->id, $this->cmiddefault);
+        $cmids = \tool_cmcompetency\api::get_list_course_modules_with_competencies(
+            $this->course->id,
+            $this->cm->id,
+            $this->cmiddefault
+        );
         $data->coursemodules = array_values($cmids);
         $data->hascoursemodules = empty($data->coursemodules) ? false : true;
         return $data;

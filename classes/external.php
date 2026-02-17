@@ -44,7 +44,6 @@ use context_user;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class external extends external_api {
-
     /**
      * Returns description of user_competency_viewed_in_coursemodule() parameters.
      *
@@ -163,10 +162,16 @@ class external extends external_api {
      * @param bool $applygroup If it is a group grade
      * @return bool
      */
-    public static function grade_competency_in_coursemodule($cmid, $userid, $competencyid, $grade, $note = null,
-            $applygroup = false) {
+    public static function grade_competency_in_coursemodule(
+        $cmid,
+        $userid,
+        $competencyid,
+        $grade,
+        $note = null,
+        $applygroup = false
+    ) {
         global $USER, $PAGE, $CFG;
-        require_once($CFG->libdir."/filelib.php");
+        require_once($CFG->libdir . "/filelib.php");
 
         $params = [
             'cmid'         => $cmid,
@@ -195,12 +200,12 @@ class external extends external_api {
             $notetoadd = $params['note'];
         }
         $evidences = api::grade_competency_in_coursemodule(
-                $params['cmid'],
-                $params['userid'],
-                $params['competencyid'],
-                $params['grade'],
-                $notetoadd,
-                $params['applygroup']
+            $params['cmid'],
+            $params['userid'],
+            $params['competencyid'],
+            $params['grade'],
+            $notetoadd,
+            $params['applygroup']
         );
         $evidence = $evidences[$params['userid']];
 

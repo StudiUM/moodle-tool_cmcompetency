@@ -36,7 +36,6 @@ use stdClass;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class user_competency_cm_exporter extends \core\external\persistent_exporter {
-
     /**
      * Returns the specific class the persistent should be an instance of.
      *

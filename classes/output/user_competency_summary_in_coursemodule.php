@@ -39,7 +39,6 @@ use tool_cmcompetency\external\user_competency_summary_in_coursemodule_exporter;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class user_competency_summary_in_coursemodule implements renderable, templatable {
-
     /** @var userid */
     protected $userid;
 
