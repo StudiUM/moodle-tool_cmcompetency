@@ -38,7 +38,6 @@ use core_competency\competency;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class user_competency_coursemodule extends persistent {
-
     /** Table name for user_competency_coursemodule persistency */
     const TABLE = 'tool_cmcompetency_usercompcm';
 
@@ -166,7 +165,6 @@ class user_competency_coursemodule extends persistent {
         if ($grade !== null && $value === null) {
             // We must set a proficiency when we set a grade.
             return new lang_string('invaliddata', 'error');
-
         } else if ($grade === null && $value !== null) {
             // We must not set a proficiency when we don't set a grade.
             return new lang_string('invaliddata', 'error');
@@ -189,7 +187,7 @@ class user_competency_coursemodule extends persistent {
 
             // Check if grade exist in the scale item values.
             $competency = $this->get_competency();
-            if (!array_key_exists($value - 1 , $competency->get_scale()->scale_items)) {
+            if (!array_key_exists($value - 1, $competency->get_scale()->scale_items)) {
                 return new lang_string('invalidgrade', 'core_competency');
             }
         }
@@ -224,7 +222,7 @@ class user_competency_coursemodule extends persistent {
                 }
             }
 
-            list($insql, $inparams) = $DB->get_in_or_equal($ids, SQL_PARAMS_NAMED);
+            [$insql, $inparams] = $DB->get_in_or_equal($ids, SQL_PARAMS_NAMED);
             $params += $inparams;
             $sql = "competencyid $insql";
         }

@@ -35,14 +35,13 @@ use context_course;
 /**
  * External course module competency API tests.
  *
- * @covers \tool_cmcompetency\api
  * @package   tool_cmcompetency
  * @author    Issam Taboubi <issam.taboubi@umontreal.ca>
  * @copyright 2019 Université de Montréal
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_cmcompetency\api::class)]
 final class api_test extends \externallib_advanced_testcase {
-
     /** @var stdClass $student1 User for generating plans, student of course1. */
     protected $student1 = null;
 
@@ -529,7 +528,7 @@ final class api_test extends \externallib_advanced_testcase {
         $this->assertEquals(null, $uc->get('grade'));
     }
 
-    /*
+    /**
      * Test list_user_competencies_in_coursemodule.
      */
     public function test_get_list_course_modules_with_competencies(): void {
@@ -671,8 +670,8 @@ final class api_test extends \externallib_advanced_testcase {
         $params['course'] = $this->course1->id;
         $params['name'] = 'Quiz1';
         $params['availability'] = json_encode(
-                    \core_availability\tree::get_root_json([\availability_group\condition::get_json($group1->id)])
-                );
+            \core_availability\tree::get_root_json([\availability_group\condition::get_json($group1->id)])
+        );
         $instance = $generator->create_instance($params);
         $cm1 = get_coursemodule_from_instance('quiz', $instance->id);
 
@@ -752,8 +751,8 @@ final class api_test extends \externallib_advanced_testcase {
         $params['course'] = $this->course1->id;
         $params['name'] = 'Quiz1';
         $params['availability'] = json_encode(
-                    \core_availability\tree::get_root_json([\availability_group\condition::get_json($group1->id)])
-                );
+            \core_availability\tree::get_root_json([\availability_group\condition::get_json($group1->id)])
+        );
         $instance = $generator->create_instance($params);
         $cm1 = get_coursemodule_from_instance('quiz', $instance->id);
 
@@ -787,7 +786,6 @@ final class api_test extends \externallib_advanced_testcase {
         $this->assertEquals(4, count($students));
         $studentslist = [$this->student1->id, $this->student2->id, $this->student3->id, $this->student4->id];
         $this->assertEqualsCanonicalizing($studentslist, array_keys($students));
-
     }
 
     /**

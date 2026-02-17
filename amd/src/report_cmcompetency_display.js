@@ -43,10 +43,10 @@ define(['jquery', 'core/notification', 'core/str'], function($, notification, st
         });
         // Collapse/Expand all.
         str.get_strings([
-            { key: 'collapseall'},
-            { key: 'expandall'}]
-        ).done(
-            function (strings) {
+            {key: 'collapseall'},
+            {key: 'expandall'}
+        ]).done(
+            function(strings) {
                 var collapseall = strings[0];
                 var expandall = strings[1];
                 $(colExpAllRegionSelector).on('click', '.collapsible-actions a', function(event) {

@@ -36,7 +36,6 @@ use tool_cmcompetency\api;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class coursemodule_competency_statistics {
-
     /** @var $competencycount The number of competencies in the course module */
     public $competencycount = 0;
 
