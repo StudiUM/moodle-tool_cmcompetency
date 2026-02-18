@@ -47,7 +47,8 @@ class behat_tool_cmcompetency extends behat_base {
     public function i_should_see_in_the_of_the_competency($arg1, $arg2, $arg3) {
         $xpathtarget = "//dl[ancestor-or-self::div/div/h4/a[contains(., '$arg3')]]/dt[text()='$arg2']/following-sibling::dd[1]";
 
-        $this->execute("behat_general::assert_element_contains_text",
+        $this->execute(
+            "behat_general::assert_element_contains_text",
             [$arg1, $xpathtarget, "xpath_element"]
         );
     }
@@ -63,7 +64,8 @@ class behat_tool_cmcompetency extends behat_base {
     public function i_should_not_see_in_the_of_the_competency($arg1, $arg2, $arg3) {
         $xpathtarget = "//dl[ancestor-or-self::div/div/h4/a[contains(., '$arg3')]]/dt[text()='$arg2']/following-sibling::dd[1]";
 
-        $this->execute("behat_general::assert_element_not_contains_text",
+        $this->execute(
+            "behat_general::assert_element_not_contains_text",
             [$arg1, $xpathtarget, "xpath_element"]
         );
     }

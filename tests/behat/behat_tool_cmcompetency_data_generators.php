@@ -26,12 +26,11 @@
 
 require_once(__DIR__ . '/../../../../../lib/behat/behat_base.php');
 
-use Behat\Gherkin\Node\TableNode as TableNode;
-use Behat\Behat\Tester\Exception\PendingException as PendingException;
+use Behat\Gherkin\Node\TableNode;
+use Behat\Behat\Tester\Exception\PendingException;
 use core_competency\api as core_competency_api;
 use tool_cmcompetency\api as tool_cmcompetency_api;
 use tool_cohortroles\api as tool_cohortroles_api;
-
 
 /**
  * Step definition to generate database fixtures for course module competencies report.
@@ -43,7 +42,6 @@ use tool_cohortroles\api as tool_cohortroles_api;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class behat_tool_cmcompetency_data_generators extends behat_base {
-
     /**
      * Creates the specified element. More info about available elements in http://docs.moodle.org/dev/Acceptance_testing#Fixtures.
      *
@@ -54,7 +52,7 @@ class behat_tool_cmcompetency_data_generators extends behat_base {
      */
     public function the_cmcompetency_fixtures_exist() {
         // Now that we need them require the data generators.
-        require_once(__DIR__.'/../../../../../lib/phpunit/classes/util.php');
+        require_once(__DIR__ . '/../../../../../lib/phpunit/classes/util.php');
 
         $datagenerator = testing_util::get_data_generator();
         $cpg = $datagenerator->get_plugin_generator('core_competency');
@@ -74,11 +72,11 @@ class behat_tool_cmcompetency_data_generators extends behat_base {
         $scale1 = $datagenerator->create_scale(['name' => 'Scale default', 'scale' => 'not good, good, very good']);
         $scale2 = $datagenerator->create_scale(['name' => 'Scale specific', 'scale' => 'not qualified, qualified']);
 
-        $scaleconfiguration1 = '[{"scaleid":"'.$scale1->id.'"},' .
+        $scaleconfiguration1 = '[{"scaleid":"' . $scale1->id . '"},' .
                 '{"name":"not good","id":1,"scaledefault":1,"proficient":0},' .
                 '{"name":"good","id":2,"scaledefault":0,"proficient":1},' .
                 '{"name":"very good","id":3,"scaledefault":0,"proficient":1}]';
-        $scaleconfiguration2 = '[{"scaleid":"'.$scale2->id.'"},' .
+        $scaleconfiguration2 = '[{"scaleid":"' . $scale2->id . '"},' .
                 '{"name":"not qualified","id":1,"scaledefault":1,"proficient":0},' .
                 '{"name":"qualified","id":2,"scaledefault":0,"proficient":1}]';
 
@@ -94,15 +92,15 @@ class behat_tool_cmcompetency_data_generators extends behat_base {
         $framework = $cpg->create_framework($framework);
         $c1        = $cpg->create_competency([
             'competencyframeworkid' => $framework->get('id'),
-            'shortname'             => 'Competency A', ]
-        );
+            'shortname'             => 'Competency A',
+        ]);
 
         $c2 = $cpg->create_competency([
             'competencyframeworkid' => $framework->get('id'),
             'shortname'             => 'Competency B',
             'scaleid'               => $scale2->id,
-            'scaleconfiguration'    => $scaleconfiguration2, ]
-        );
+            'scaleconfiguration'    => $scaleconfiguration2,
+        ]);
 
         // Create course competency.
         $cpg->create_course_competency(['courseid' => $course1->id, 'competencyid' => $c1->get('id')]);
@@ -119,20 +117,20 @@ class behat_tool_cmcompetency_data_generators extends behat_base {
             'firstname' => 'Rebecca',
             'lastname'  => 'Armenta',
             'username'  => 'rebeccaa',
-            'password'  => 'rebeccaa', ]
-        );
+            'password'  => 'rebeccaa',
+        ]);
         $user2 = $datagenerator->create_user([
             'firstname' => 'Pablo',
             'lastname'  => 'Menendez',
             'username'  => 'pablom',
-            'password'  => 'pablom', ]
-        );
+            'password'  => 'pablom',
+        ]);
         $user3 = $datagenerator->create_user([
             'firstname' => 'Stepanie',
             'lastname'  => 'Grant',
             'username'  => 'stepanieg',
-            'password'  => 'stepanieg', ]
-        );
+            'password'  => 'stepanieg',
+        ]);
 
         // Enrol users in courses.
         $datagenerator->enrol_user($user1->id, $course1->id);
@@ -169,14 +167,12 @@ class behat_tool_cmcompetency_data_generators extends behat_base {
         groups_add_member($group2->id, $user3->id);
 
         // Create and enrol teacher in courses.
-        $teacher = $datagenerator->create_user(
-                [
-                    'firstname' => 'Teacher',
-                    'lastname'  => 'Test',
-                    'username'  => 'teacher',
-                    'password'  => 'teacher',
-                ]
-        );
+        $teacher = $datagenerator->create_user([
+            'firstname' => 'Teacher',
+            'lastname'  => 'Test',
+            'username'  => 'teacher',
+            'password'  => 'teacher',
+        ]);
         $datagenerator->enrol_user($teacher->id, $course1->id, 'editingteacher', 'manual');
         $datagenerator->enrol_user($teacher->id, $course2->id, 'editingteacher', 'manual');
 
@@ -193,8 +189,11 @@ class behat_tool_cmcompetency_data_generators extends behat_base {
         $options = ['course' => $course1->id, 'name' => 'Module 1',
             'teamsubmission' => 1, 'teamsubmissiongroupingid' => $grouping->id, ];
         $cm1 = $datagenerator->create_module('assign', $options);
-        $cm2 = $datagenerator->create_module('forum', ['course' => $course1->id, 'name' => 'Module 2'],
-            ['groupmode' => SEPARATEGROUPS, 'groupingid' => $grouping->id]);
+        $cm2 = $datagenerator->create_module(
+            'forum',
+            ['course' => $course1->id, 'name' => 'Module 2'],
+            ['groupmode' => SEPARATEGROUPS, 'groupingid' => $grouping->id]
+        );
         $cm21 = $datagenerator->create_module('forum', ['course' => $course1->id, 'name' => 'Forum Test']);
 
         // Create modules for course 2.

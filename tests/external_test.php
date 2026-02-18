@@ -33,14 +33,13 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 /**
  * External course module competency webservice API tests.
  *
- * @covers \tool_cmcompetency\external
  * @package   tool_cmcompetency
  * @author    Issam Taboubi <issam.taboubi@umontreal.ca>
  * @copyright 2019 Université de Montréal
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_cmcompetency\external::class)]
 final class external_test extends \externallib_advanced_testcase {
-
     /** @var stdClass $creator User with enough permissions to create insystem context. */
     protected $creator = null;
 
@@ -100,8 +99,8 @@ final class external_test extends \externallib_advanced_testcase {
 
         $this->scale1 = $this->getDataGenerator()->create_scale(["scale" => "value1, value2"]);
 
-        $this->scaleconfiguration1 = '[{"scaleid":"'.$this->scale1->id.'"},' .
-                '{"name":"value1","id":1,"scaledefault":1,"proficient":0},' .
+        $this->scaleconfiguration1 = '[{"scaleid":"' . $this->scale1->id . '"},' .
+            '{"name":"value1","id":1,"scaledefault":1,"proficient":0}]';
 
         accesslib_clear_all_caches_for_unit_testing();
     }
@@ -128,8 +127,14 @@ final class external_test extends \externallib_advanced_testcase {
 
         $evidence = external::grade_competency_in_coursemodule($cm->id, $this->user->id, $c1->get('id'), 1, 'Evil note', false);
 
-        $this->assertEquals(get_string('evidence_manualoverrideincoursemodule', 'tool_cmcompetency', 'Page: Page 1'),
-                $evidence->description);
+        $this->assertEquals(
+            get_string(
+                'evidence_manualoverrideincoursemodule',
+                'tool_cmcompetency',
+                'Page: Page 1'
+            ),
+            $evidence->description
+        );
         $this->assertEquals('A', $evidence->gradename);
         $this->assertEquals('Evil note', $evidence->note);
 

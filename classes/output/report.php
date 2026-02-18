@@ -47,7 +47,6 @@ use tool_cmcompetency\coursemodule_competency_statistics;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class report implements renderable, templatable {
-
     /** @var int $cmid */
     protected $cmid;
     /** @var int $userid */
@@ -124,7 +123,7 @@ class report implements renderable, templatable {
                 }
                 $users = [];
                 if (!empty($usercache)) {
-                    list($sql, $params) = $DB->get_in_or_equal(array_keys($usercache));
+                    [$sql, $params] = $DB->get_in_or_equal(array_keys($usercache));
                     $users = $DB->get_records_select('user', 'id ' . $sql, $params);
                 }
 
