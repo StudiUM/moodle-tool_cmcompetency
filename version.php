@@ -26,11 +26,12 @@
 defined('MOODLE_INTERNAL') || die();
 
 
-$plugin->version   = 2025012300; // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2024100100; // Requires this Moodle version.
+$plugin->version   = 2026050400;
+$plugin->requires  = 2025100600;
+$plugin->release   = '2.0.0';
 $plugin->maturity  = MATURITY_STABLE;
-$plugin->component = 'tool_cmcompetency'; // Full name of the plugin (used for diagnostics).
+$plugin->component = 'tool_cmcompetency';
 
 $plugin->dependencies = [
-    'tool_lp' => 2024100700,
+    'tool_lp' => 2025100600,
 ];
