@@ -127,12 +127,14 @@ final class external_test extends \externallib_advanced_testcase {
 
         $evidence = external::grade_competency_in_coursemodule($cm->id, $this->user->id, $c1->get('id'), 1, 'Evil note', false);
 
+        // The description is a PARAM_TEXT external value, so on export it is passed through clean_string(),
+        // which encodes special characters (e.g. quotes) as numeric HTML entities for safe mustache rendering.
         $this->assertEquals(
-            get_string(
+            clean_string(get_string(
                 'evidence_manualoverrideincoursemodule',
                 'tool_cmcompetency',
                 'Page: Page 1'
-            ),
+            )),
             $evidence->description
         );
         $this->assertEquals('A', $evidence->gradename);
