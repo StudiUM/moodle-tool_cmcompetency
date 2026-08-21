@@ -368,7 +368,8 @@ class api {
             $action,
             $desckey,
             'tool_cmcompetency',
-            $contextcm->get_context_name(),
+            // Escaping is left to the display layer (e.g. evidence_summary.mustache) to avoid double-encoding.
+            $contextcm->get_context_name(true, false, false),
             false,
             null,
             $grade,
