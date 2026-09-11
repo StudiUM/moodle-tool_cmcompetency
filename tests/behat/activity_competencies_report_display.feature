@@ -1,4 +1,4 @@
-@report @javascript @tool_cmcompetency
+@report @javascript @tool @tool_cmcompetency
 Feature: View the competencies report for an activity for student
   As a student
 
